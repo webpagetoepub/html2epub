@@ -1,0 +1,30 @@
+{
+  "name": "html2epub",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc-watch --project . --outDir ./dist --onSuccess 'npm run build'",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carlsonsantana/html2epub.git"
+  },
+  "author": "Carlson Santana Cruz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/carlsonsantana/html2epub/issues"
+  },
+  "homepage": "https://github.com/carlsonsantana/html2epub#readme",
+  "devDependencies": {
+    "ts-loader": "^9.4.2",
+    "tsc-watch": "^6.0.0",
+    "typescript": "^4.9.4",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  },
+  "dependencies": {
+    "jepub": "^2.1.4"
+  }
+}
