@@ -1,5 +1,6 @@
 import getMetadata from './get_metadata';
 import cleanDocument from './clean_document';
+import reduceHeadingLevelPage from './reduce_heading_level';
 import getMainContent from './get_main_content';
 import loadImages from './load_images';
 import createEPUB from './create_epub';
@@ -11,6 +12,7 @@ export default async function convertDocumentToEPub(
   const metadata = getMetadata(htmlDoc, url);
 
   cleanDocument(htmlDoc);
+  reduceHeadingLevelPage(htmlDoc);
 
   const content = getMainContent(htmlDoc);
   const images = await loadImages(content, url);
