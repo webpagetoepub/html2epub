@@ -33,5 +33,5 @@ function getHtmlContent(element: Element) {
 
 function replaceCommentsImagesByImages(content: string) {
   return content.replace(/<!\-\-\s*<%= image\[/g, '<%= image[')
-                .replace(/] %>\s*\-\->/, '] %>');
+                .replace(/] %>\s*\-\->/g, '] %>');
 }
