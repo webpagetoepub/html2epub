@@ -1,7 +1,7 @@
 import jEpub from 'jepub/dist/jepub.js';
 
 export default async function createEPUB(
-  content: string,
+  contents: {title: string, content: string}[],
   metadata: any,
   images: {id: string, blob: Blob}[],
 ): Promise<Blob> {
@@ -12,7 +12,10 @@ export default async function createEPUB(
   jepub.date(metadata.date);
 
   images.forEach(image => jepub.image(image.blob, image.id));
-  jepub.add(metadata.title, content);
+
+  for (const content of contents) {
+    jepub.add(content.title, content.content);
+  }
 
   return await jepub.generate('blob', (metadata: any) => {
     console.log('progression: ' + metadata.percent.toFixed(2) + ' %');
