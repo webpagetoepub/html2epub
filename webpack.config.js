@@ -8,7 +8,7 @@ module.exports = {
     filename: 'main.js',
   },
   resolve: {
-    extensions: ['.ts'],
+    extensions: ['.ts', '.js'],
   },
   module: {
     rules: [{

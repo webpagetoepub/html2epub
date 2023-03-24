@@ -25,6 +25,7 @@
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
+    "crypto-js": "^4.1.1",
     "jepub": "^2.1.4"
   }
 }

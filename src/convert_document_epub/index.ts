@@ -1,6 +1,8 @@
 import getMetadata from './get_metadata';
 import cleanDocument from './clean_document';
+import reduceHeadingLevelPage from './reduce_heading_level';
 import getMainContent from './get_main_content';
+import splitContentByHeadings from './split_main_content';
 import loadImages from './load_images';
 import createEPUB from './create_epub';
 
@@ -11,12 +13,17 @@ export default async function convertDocumentToEPub(
   const metadata = getMetadata(htmlDoc, url);
 
   cleanDocument(htmlDoc);
+  reduceHeadingLevelPage(htmlDoc);
 
-  const content = getMainContent(htmlDoc);
-  const images = await loadImages(content, url);
+  const mainContent = getMainContent(htmlDoc);
+  const images = await loadImages(mainContent, url);
+  const splitedContents = splitContentByHeadings(mainContent, metadata);
 
   return await createEPUB(
-    getHtmlContent(content),
+    splitedContents.map(splitedContent => ({
+      title: splitedContent.title,
+      content: getHtmlContent(splitedContent.content),
+    })),
     metadata,
     images,
   );
@@ -33,5 +40,5 @@ function getHtmlContent(element: Element) {
 
 function replaceCommentsImagesByImages(content: string) {
   return content.replace(/<!\-\-\s*<%= image\[/g, '<%= image[')
-                .replace(/] %>\s*\-\->/, '] %>');
+                .replace(/] %>\s*\-\->/g, '] %>');
 }
