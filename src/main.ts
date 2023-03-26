@@ -16,7 +16,7 @@ formElement.onsubmit = (event: Event) => {
   const inputUrlElement = document.getElementById('url') as HTMLInputElement;
   const url = inputUrlElement.value;
 
-  convertPageToEPUB(url);
+  convertPageToEPUB(url).then(downloadEPUB);
 
   return false;
 };
