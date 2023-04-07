@@ -1,3 +1,7 @@
+import step from '../../step';
+
+const DESCRIPTION = 'Removing unused HTML elements';
+
 const EMBEDDED_ELEMENTS_TO_REMOVE = [
   'map', 'embed', 'object', 'video', 'audio', 'iframe', 'canvas', 'applet',
   'frameset',
@@ -19,7 +23,7 @@ const ELEMENTS_TO_REMOVE = [].concat(
   NOT_SUPPORTED_ELEMENTS_TO_REMOVE,
 );
 
-export default function removeElementsFromDocument(htmlDoc: HTMLDocument) {
+function removeElementsFromDocument(htmlDoc: HTMLDocument) {
   removeElementsByTags(htmlDoc, ELEMENTS_TO_REMOVE);
 }
 
@@ -36,3 +40,5 @@ function removeElements(elements: HTMLCollectionOf<Element>) {
     element.remove();
   }
 }
+
+export default step(DESCRIPTION, removeElementsFromDocument);

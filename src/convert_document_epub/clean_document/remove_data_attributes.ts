@@ -1,4 +1,9 @@
-export default function removeDataAttributes(htmlDoc: HTMLDocument) {
+import step from '../../step';
+
+const DESCRIPTION = 'Removing custom attributes';
+
+
+function removeDataAttributes(htmlDoc: HTMLDocument) {
   function removeDataAttributesElement(element: Element) {
     const attributes = [];
     for (const attribute of Array.from(element.attributes)) {
@@ -26,3 +31,5 @@ function visitElement(element: Element, callback: Function) {
     visitElement(child, callback);
   }
 }
+
+export default step(DESCRIPTION, removeDataAttributes);

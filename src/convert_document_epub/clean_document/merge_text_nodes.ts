@@ -1,4 +1,9 @@
-export default function mergeTextNodes(htmlDoc: HTMLDocument) {
+import step from '../../step';
+
+const DESCRIPTION = 'Merging text nodes';
+
+
+function mergeTextNodes(htmlDoc: HTMLDocument) {
   mergeTextNodesElement(htmlDoc.documentElement);
 }
 
@@ -26,3 +31,5 @@ function mergeTextNodesElement(element: Element) {
     }
   }
 }
+
+export default step(DESCRIPTION, mergeTextNodes);

@@ -6,8 +6,12 @@ import removeDataAttributes from './remove_data_attributes';
 import removeAttributes from './remove_attributes';
 import mergeTextNodes from './merge_text_nodes';
 import removeExtraWhitespacesFromDocument from './remove_whitespaces';
+import step from '../../step';
 
-export default function cleanDocument(htmlDoc: HTMLDocument) {
+const DESCRIPTION = 'Cleaning HTML document';
+
+
+function cleanDocument(htmlDoc: HTMLDocument) {
   removeElementsFromDocument(htmlDoc);
   removeHiddenElements(htmlDoc);
   removeAllComments(htmlDoc);
@@ -17,3 +21,5 @@ export default function cleanDocument(htmlDoc: HTMLDocument) {
   mergeTextNodes(htmlDoc);
   removeExtraWhitespacesFromDocument(htmlDoc);
 }
+
+export default step(DESCRIPTION, cleanDocument);

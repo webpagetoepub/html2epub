@@ -1,4 +1,9 @@
-export default function removeExtraWhitespacesFromDocument(
+import step from '../../step';
+
+const DESCRIPTION = 'Removing extra whitespaces';
+
+
+function removeExtraWhitespacesFromDocument(
   htmlDoc: HTMLDocument,
 ) {
   function filterNode() {
@@ -34,3 +39,5 @@ function canRemoveWhitespaces(textNode: Text) {
 
     return ['PRE', 'CODE'].indexOf(parentTagName) == -1;
 }
+
+export default step(DESCRIPTION, removeExtraWhitespacesFromDocument);

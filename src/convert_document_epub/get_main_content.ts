@@ -1,4 +1,9 @@
-export default function getContent(htmlDoc: HTMLDocument) {
+import step from '../step';
+
+const DESCRIPTION = 'Choosing the main content from HTML document';
+
+
+function getContent(htmlDoc: HTMLDocument) {
   const mainArticleElement = htmlDoc.querySelectorAll('main article');
   if (mainArticleElement.length === 1) {
     return mainArticleElement[0];
@@ -16,3 +21,5 @@ export default function getContent(htmlDoc: HTMLDocument) {
 
   return htmlDoc.body;
 }
+
+export default step(DESCRIPTION, getContent);

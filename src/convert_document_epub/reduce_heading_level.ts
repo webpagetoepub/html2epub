@@ -1,3 +1,7 @@
+import step from '../step';
+
+const DESCRIPTION = 'Reducing the heading level';
+
 const HEADING_MAP: { [key: string]: string } = {
   'H1': 'h2',
   'H2': 'h3',
@@ -6,7 +10,7 @@ const HEADING_MAP: { [key: string]: string } = {
   'H5': 'h6',
 };
 
-export default function reduceHeadingLevelPage(htmlDoc: HTMLDocument) {
+function reduceHeadingLevelPage(htmlDoc: HTMLDocument) {
   if (!hasH1Heading(htmlDoc)) {
     return;
   }
@@ -59,3 +63,5 @@ function copyChildNodes(from: Element, to: Element) {
     to.appendChild(childNode);
   }
 }
+
+export default step(DESCRIPTION, reduceHeadingLevelPage);

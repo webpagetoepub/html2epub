@@ -1,4 +1,9 @@
-export default function removeAllComments(htmlDoc: HTMLDocument) {
+import step from '../../step';
+
+const DESCRIPTION = 'Removing all HTML comments';
+
+
+function removeAllComments(htmlDoc: HTMLDocument) {
   function filterNode() {
     return NodeFilter.FILTER_ACCEPT;
   }
@@ -19,3 +24,5 @@ export default function removeAllComments(htmlDoc: HTMLDocument) {
     comment.remove();
   }
 }
+
+export default step(DESCRIPTION, removeAllComments);

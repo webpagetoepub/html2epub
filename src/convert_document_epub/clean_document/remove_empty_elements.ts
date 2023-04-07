@@ -1,3 +1,7 @@
+import step from '../../step';
+
+const DESCRIPTION = 'Removing empty HTML elements';
+
 const TAGS_CAN_REMOVE = [
   'SPAN', 'ABBR', 'CITE', 'EM', 'I', 'B', 'SUB', 'SUP', 'SMALL', 'STRONG',
   'MARK', 'DEL', 'S', 'CODE', 'P', 'OL', 'UL', 'LI', 'DIV', 'PRE', 'BLOCKQUOTE',
@@ -6,7 +10,7 @@ const TAGS_CAN_REMOVE = [
   'CAPTION', 'THEAD', 'TBODY', 'TFOOT',
 ];
 
-export default function removeEmptyElements(htmlDoc: HTMLDocument) {
+function removeEmptyElements(htmlDoc: HTMLDocument) {
   function filterNode() {
     return NodeFilter.FILTER_ACCEPT;
   }
@@ -43,3 +47,5 @@ function canRemoveElement(element: HTMLElement) {
     && (!element.innerHTML.trim())
   );
 }
+
+export default step(DESCRIPTION, removeEmptyElements);

@@ -1,4 +1,9 @@
-export default function getMetadata(htmlDoc: HTMLDocument, url: string) {
+import step from '../step';
+
+const DESCRIPTION = 'Retrieving metadata from HTML document';
+
+
+function getMetadata(htmlDoc: HTMLDocument, url: string) {
   return {
     title: htmlDoc.title,
     date: getDate(htmlDoc),
@@ -119,3 +124,5 @@ function getContentFromMetatags(
 
   return null;
 }
+
+export default step(DESCRIPTION, getMetadata);

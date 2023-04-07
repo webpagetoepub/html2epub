@@ -1,7 +1,12 @@
-export default function splitMainContentByHeadings(
+import step from '../step';
+
+const DESCRIPTION = 'Splitting the main content from HTML document by headings';
+
+
+function splitMainContentByHeadings(
   mainContent: Element,
   metadata: any,
-) {
+): {title: string, content: Element}[] {
   const heading1Tags = Array.from(mainContent.getElementsByTagName('h2'));
 
   if (heading1Tags.length === 0) {
@@ -98,3 +103,5 @@ function moveElementsToNewParentAfter(
     }
   }
 }
+
+export default step(DESCRIPTION, splitMainContentByHeadings);

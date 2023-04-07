@@ -1,6 +1,11 @@
 import jEpub from 'jepub/dist/jepub.js';
 
-export default async function createEPUB(
+import step from '../step';
+
+const DESCRIPTION = 'Creating ePUB file';
+
+
+async function createEPUB(
   contents: {title: string, content: string}[],
   metadata: any,
   images: {id: string, blob: Blob}[],
@@ -25,3 +30,5 @@ export default async function createEPUB(
     }
   });
 }
+
+export default step(DESCRIPTION, createEPUB);

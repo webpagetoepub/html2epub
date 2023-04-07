@@ -5,8 +5,12 @@ import getMainContent from './get_main_content';
 import splitContentByHeadings from './split_main_content';
 import loadImages from './load_images';
 import createEPUB from './create_epub';
+import step from '../step';
 
-export default async function convertDocumentToEPub(
+const DESCRIPTION = 'Converting HTML document into ePUB';
+
+
+async function convertDocumentToEPub(
   htmlDoc: HTMLDocument,
   url: string,
 ) {
@@ -42,3 +46,5 @@ function replaceCommentsImagesByImages(content: string) {
   return content.replace(/<!\-\-\s*<%= image\[/g, '<%= image[')
                 .replace(/] %>\s*\-\->/g, '] %>');
 }
+
+export default step(DESCRIPTION, convertDocumentToEPub);

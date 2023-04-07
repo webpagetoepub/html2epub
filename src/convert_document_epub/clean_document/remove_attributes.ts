@@ -1,3 +1,7 @@
+import step from '../../step';
+
+const DESCRIPTION = 'Removing unused element attributes';
+
 const STYLE_ATTRIBUTES_TO_REMOVE = ['style', 'class', 'id'];
 
 const WINDOW_EVENT_ATTRIBUTES_TO_REMOVE = [
@@ -43,7 +47,7 @@ const ATTRIBUTES_TO_REMOVE = [].concat(
 );
 
 
-export default function removeAttributes(htmlDoc: HTMLDocument) {
+function removeAttributes(htmlDoc: HTMLDocument) {
   for (const attribute of ATTRIBUTES_TO_REMOVE) {
     const elements = htmlDoc.querySelectorAll(`[${attribute}]`);
 
@@ -52,3 +56,5 @@ export default function removeAttributes(htmlDoc: HTMLDocument) {
     }
   }
 }
+
+export default step(DESCRIPTION, removeAttributes);
