@@ -1,4 +1,4 @@
-import step from '../../step';
+import { Step } from '../../step';
 
 const DESCRIPTION = 'Removing extra whitespaces';
 
@@ -40,4 +40,4 @@ function canRemoveWhitespaces(textNode: Text) {
     return ['PRE', 'CODE'].indexOf(parentTagName) == -1;
 }
 
-export default step(DESCRIPTION, removeExtraWhitespacesFromDocument);
+export default new Step(DESCRIPTION, removeExtraWhitespacesFromDocument);

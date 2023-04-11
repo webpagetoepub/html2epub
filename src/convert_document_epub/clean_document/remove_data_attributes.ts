@@ -1,4 +1,4 @@
-import step from '../../step';
+import { Step } from '../../step';
 
 const DESCRIPTION = 'Removing custom attributes';
 
@@ -32,4 +32,4 @@ function visitElement(element: Element, callback: Function) {
   }
 }
 
-export default step(DESCRIPTION, removeDataAttributes);
+export default new Step(DESCRIPTION, removeDataAttributes);

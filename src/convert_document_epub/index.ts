@@ -5,17 +5,19 @@ import getMainContent from './get_main_content';
 import splitContentByHeadings, { SplittedElement } from './split_main_content';
 import loadImages from './load_images';
 import createEPUB from './create_epub';
-import step, { Process } from '../step';
-
-const DESCRIPTION = 'Converting HTML document into ePUB';
+import { Step, Process } from '../step';
 
 
-async function convertDocumentToEPub(
+export default async function convertDocumentToEPub(
   htmlDoc: HTMLDocument,
   url: string,
 ) {
-  const htmlDocStep = () => htmlDoc;
-  const urlStep = () => url;
+  const htmlDocStep = new Step(null, () => htmlDoc);
+  const urlStep = new Step(null, () => url);
+  const convertSplitedContentInHTMLContentStep = new Step(
+    null,
+    convertSplitedContentInHTMLContent,
+  );
 
   const convertDocumentProcess = new Process();
   convertDocumentProcess.addStep(htmlDocStep);
@@ -30,12 +32,12 @@ async function convertDocumentToEPub(
     [getMainContent, getMetadata],
   );
   convertDocumentProcess.addStep(
-    convertSplitedContentInHTMLContent,
+    convertSplitedContentInHTMLContentStep,
     [splitContentByHeadings],
   );
   convertDocumentProcess.addStep(
     createEPUB,
-    [convertSplitedContentInHTMLContent, getMetadata, loadImages],
+    [convertSplitedContentInHTMLContentStep, getMetadata, loadImages],
   );
 
   return await convertDocumentProcess.process();
@@ -63,5 +65,3 @@ function replaceCommentsImagesByImages(content: string) {
   return content.replace(/<!\-\-\s*<%= image\[/g, '<%= image[')
                 .replace(/] %>\s*\-\->/g, '] %>');
 }
-
-export default step(DESCRIPTION, convertDocumentToEPub);

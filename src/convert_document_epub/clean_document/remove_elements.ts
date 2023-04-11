@@ -1,4 +1,4 @@
-import step from '../../step';
+import { Step } from '../../step';
 
 const DESCRIPTION = 'Removing unused HTML elements';
 
@@ -41,4 +41,4 @@ function removeElements(elements: HTMLCollectionOf<Element>) {
   }
 }
 
-export default step(DESCRIPTION, removeElementsFromDocument);
+export default new Step(DESCRIPTION, removeElementsFromDocument);

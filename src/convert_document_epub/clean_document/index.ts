@@ -6,13 +6,13 @@ import removeDataAttributes from './remove_data_attributes';
 import removeAttributes from './remove_attributes';
 import mergeTextNodes from './merge_text_nodes';
 import removeExtraWhitespacesFromDocument from './remove_whitespaces';
-import step, { Process } from '../../step';
+import { Step, Process } from '../../step';
 
 const DESCRIPTION = 'Cleaning HTML document';
 
 
 function cleanDocument(htmlDoc: HTMLDocument) {
-  const firstStep = () => htmlDoc;
+  const firstStep = new Step(null, () => htmlDoc);
 
   const cleanDocumentProcess = new Process();
 
@@ -29,4 +29,4 @@ function cleanDocument(htmlDoc: HTMLDocument) {
   cleanDocumentProcess.process();
 }
 
-export default step(DESCRIPTION, cleanDocument);
+export default new Step(DESCRIPTION, cleanDocument);

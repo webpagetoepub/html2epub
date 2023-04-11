@@ -1,4 +1,4 @@
-import step from '../../step';
+import { Step } from '../../step';
 
 const DESCRIPTION = 'Removing unused element attributes';
 
@@ -57,4 +57,4 @@ function removeAttributes(htmlDoc: HTMLDocument) {
   }
 }
 
-export default step(DESCRIPTION, removeAttributes);
+export default new Step(DESCRIPTION, removeAttributes);

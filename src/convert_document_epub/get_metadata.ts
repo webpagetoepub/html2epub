@@ -1,4 +1,4 @@
-import step from '../step';
+import { Step } from '../step';
 
 const DESCRIPTION = 'Retrieving metadata from HTML document';
 
@@ -125,4 +125,4 @@ function getContentFromMetatags(
   return null;
 }
 
-export default step(DESCRIPTION, getMetadata);
+export default new Step(DESCRIPTION, getMetadata);

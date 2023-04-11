@@ -1,6 +1,6 @@
 import jEpub from 'jepub/dist/jepub.js';
 
-import step from '../step';
+import { Step } from '../step';
 
 const DESCRIPTION = 'Creating ePUB file';
 
@@ -37,4 +37,4 @@ async function createEPUB(
   });
 }
 
-export default step(DESCRIPTION, createEPUB);
+export default new Step(DESCRIPTION, createEPUB);

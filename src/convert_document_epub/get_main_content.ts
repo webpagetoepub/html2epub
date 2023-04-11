@@ -1,4 +1,4 @@
-import step from '../step';
+import { Step } from '../step';
 
 const DESCRIPTION = 'Choosing the main content from HTML document';
 
@@ -22,4 +22,4 @@ function getContent(htmlDoc: HTMLDocument) {
   return htmlDoc.body;
 }
 
-export default step(DESCRIPTION, getContent);
+export default new Step(DESCRIPTION, getContent);

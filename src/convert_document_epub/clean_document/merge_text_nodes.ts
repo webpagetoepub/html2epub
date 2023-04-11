@@ -1,4 +1,4 @@
-import step from '../../step';
+import { Step } from '../../step';
 
 const DESCRIPTION = 'Merging text nodes';
 
@@ -32,4 +32,4 @@ function mergeTextNodesElement(element: Element) {
   }
 }
 
-export default step(DESCRIPTION, mergeTextNodes);
+export default new Step(DESCRIPTION, mergeTextNodes);

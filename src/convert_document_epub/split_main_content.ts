@@ -1,4 +1,4 @@
-import step from '../step';
+import { Step } from '../step';
 
 const DESCRIPTION = 'Splitting the main content from HTML document by headings';
 
@@ -110,4 +110,4 @@ function moveElementsToNewParentAfter(
   }
 }
 
-export default step(DESCRIPTION, splitMainContentByHeadings);
+export default new Step(DESCRIPTION, splitMainContentByHeadings);

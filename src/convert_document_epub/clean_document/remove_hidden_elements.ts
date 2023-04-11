@@ -1,4 +1,4 @@
-import step from '../../step';
+import { Step } from '../../step';
 
 const DESCRIPTION = 'Removing HTML hidden elements';
 
@@ -11,4 +11,4 @@ function removeHiddenElements(htmlDoc: HTMLDocument) {
   }
 }
 
-export default step(DESCRIPTION, removeHiddenElements);
+export default new Step(DESCRIPTION, removeHiddenElements);

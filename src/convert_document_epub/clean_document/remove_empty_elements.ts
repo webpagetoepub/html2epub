@@ -1,4 +1,4 @@
-import step from '../../step';
+import { Step } from '../../step';
 
 const DESCRIPTION = 'Removing empty HTML elements';
 
@@ -48,4 +48,4 @@ function canRemoveElement(element: HTMLElement) {
   );
 }
 
-export default step(DESCRIPTION, removeEmptyElements);
+export default new Step(DESCRIPTION, removeEmptyElements);

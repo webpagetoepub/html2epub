@@ -1,4 +1,4 @@
-import step from '../step';
+import { Step } from '../step';
 
 const DESCRIPTION = 'Reducing the heading level';
 
@@ -64,4 +64,4 @@ function copyChildNodes(from: Element, to: Element) {
   }
 }
 
-export default step(DESCRIPTION, reduceHeadingLevelPage);
+export default new Step(DESCRIPTION, reduceHeadingLevelPage);

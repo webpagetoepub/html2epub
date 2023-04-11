@@ -1,4 +1,4 @@
-import step from '../../step';
+import { Step } from '../../step';
 
 const DESCRIPTION = 'Removing all HTML comments';
 
@@ -25,4 +25,4 @@ function removeAllComments(htmlDoc: HTMLDocument) {
   }
 }
 
-export default step(DESCRIPTION, removeAllComments);
+export default new Step(DESCRIPTION, removeAllComments);

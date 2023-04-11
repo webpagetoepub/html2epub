@@ -1,7 +1,7 @@
 import md5 from 'crypto-js/md5';
 
 import { loadFileFrom } from '../load_url';
-import step from '../step';
+import { Step } from '../step';
 
 const DESCRIPTION = 'Loading images';
 
@@ -58,4 +58,4 @@ function loadImage(imageSrc: string) {
   return loadFileFrom(imageSrc).then(blob => ({id, blob}));
 }
 
-export default step(DESCRIPTION, loadImages);
+export default new Step(DESCRIPTION, loadImages);
