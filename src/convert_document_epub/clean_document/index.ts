@@ -12,17 +12,21 @@ const DESCRIPTION = 'Cleaning HTML document';
 
 
 function cleanDocument(htmlDoc: HTMLDocument) {
-  const cleanDocumentProcess = new Process();
-  cleanDocumentProcess.addStep(removeElementsFromDocument);
-  cleanDocumentProcess.addStep(removeHiddenElements);
-  cleanDocumentProcess.addStep(removeAllComments);
-  cleanDocumentProcess.addStep(removeEmptyElements);
-  cleanDocumentProcess.addStep(removeDataAttributes);
-  cleanDocumentProcess.addStep(removeAttributes);
-  cleanDocumentProcess.addStep(mergeTextNodes);
-  cleanDocumentProcess.addStep(removeExtraWhitespacesFromDocument);
+  const firstStep = () => htmlDoc;
 
-  cleanDocumentProcess.process(htmlDoc);
+  const cleanDocumentProcess = new Process();
+
+  cleanDocumentProcess.addStep(firstStep);
+  cleanDocumentProcess.addStep(removeElementsFromDocument, [firstStep]);
+  cleanDocumentProcess.addStep(removeHiddenElements, [firstStep]);
+  cleanDocumentProcess.addStep(removeAllComments, [firstStep]);
+  cleanDocumentProcess.addStep(removeEmptyElements, [firstStep]);
+  cleanDocumentProcess.addStep(removeDataAttributes, [firstStep]);
+  cleanDocumentProcess.addStep(removeAttributes, [firstStep]);
+  cleanDocumentProcess.addStep(mergeTextNodes, [firstStep]);
+  cleanDocumentProcess.addStep(removeExtraWhitespacesFromDocument, [firstStep]);
+
+  cleanDocumentProcess.process();
 }
 
 export default step(DESCRIPTION, cleanDocument);
