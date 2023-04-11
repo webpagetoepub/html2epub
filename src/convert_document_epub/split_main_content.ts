@@ -3,14 +3,20 @@ import step from '../step';
 const DESCRIPTION = 'Splitting the main content from HTML document by headings';
 
 
+export interface SplittedElement {
+  title: string;
+  element: Element;
+}
+
+
 function splitMainContentByHeadings(
   mainContent: Element,
   metadata: any,
-): {title: string, content: Element}[] {
+): SplittedElement[] {
   const heading1Tags = Array.from(mainContent.getElementsByTagName('h2'));
 
   if (heading1Tags.length === 0) {
-    return [{title: metadata.title, content: mainContent}];
+    return [{title: metadata.title, element: mainContent}];
   }
 
   if (heading1Tags.length > 1) {
@@ -39,7 +45,7 @@ function splitMainContent(mainContent: Element, elementReferences: Element[]) {
     const title = recursiveSplitContent(ancestors, newRootContentElement);
 
     if (newRootContentElement.innerText.trim() !== '') {
-      contentElements.push({title, content: newRootContentElement});
+      contentElements.push({title, element: newRootContentElement});
     }
   }
 

@@ -5,8 +5,14 @@ import step from '../step';
 const DESCRIPTION = 'Creating ePUB file';
 
 
+export interface SplittedContent {
+  title: string;
+  content: string;
+}
+
+
 async function createEPUB(
-  contents: {title: string, content: string}[],
+  contents: SplittedContent[],
   metadata: any,
   images: {id: string, blob: Blob}[],
 ): Promise<Blob> {

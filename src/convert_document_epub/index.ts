@@ -2,7 +2,7 @@ import getMetadata from './get_metadata';
 import cleanDocument from './clean_document';
 import reduceHeadingLevelPage from './reduce_heading_level';
 import getMainContent from './get_main_content';
-import splitContentByHeadings from './split_main_content';
+import splitContentByHeadings, { SplittedElement } from './split_main_content';
 import loadImages from './load_images';
 import createEPUB from './create_epub';
 import step, { Process } from '../step';
@@ -42,11 +42,11 @@ async function convertDocumentToEPub(
 }
 
 function convertSplitedContentInHTMLContent(
-  splitedContents: {title: string, content: Element}[],
+  splitedContents: SplittedElement[],
 ) {
   return splitedContents.map(splitedContent => ({
     title: splitedContent.title,
-    content: getHtmlContent(splitedContent.content),
+    content: getHtmlContent(splitedContent.element),
   }));
 }
 
