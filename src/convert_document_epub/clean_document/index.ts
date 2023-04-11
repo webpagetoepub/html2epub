@@ -6,20 +6,23 @@ import removeDataAttributes from './remove_data_attributes';
 import removeAttributes from './remove_attributes';
 import mergeTextNodes from './merge_text_nodes';
 import removeExtraWhitespacesFromDocument from './remove_whitespaces';
-import step from '../../step';
+import step, { Process } from '../../step';
 
 const DESCRIPTION = 'Cleaning HTML document';
 
 
 function cleanDocument(htmlDoc: HTMLDocument) {
-  removeElementsFromDocument(htmlDoc);
-  removeHiddenElements(htmlDoc);
-  removeAllComments(htmlDoc);
-  removeEmptyElements(htmlDoc);
-  removeDataAttributes(htmlDoc);
-  removeAttributes(htmlDoc);
-  mergeTextNodes(htmlDoc);
-  removeExtraWhitespacesFromDocument(htmlDoc);
+  const cleanDocumentProcess = new Process();
+  cleanDocumentProcess.addStep(removeElementsFromDocument);
+  cleanDocumentProcess.addStep(removeHiddenElements);
+  cleanDocumentProcess.addStep(removeAllComments);
+  cleanDocumentProcess.addStep(removeEmptyElements);
+  cleanDocumentProcess.addStep(removeDataAttributes);
+  cleanDocumentProcess.addStep(removeAttributes);
+  cleanDocumentProcess.addStep(mergeTextNodes);
+  cleanDocumentProcess.addStep(removeExtraWhitespacesFromDocument);
+
+  cleanDocumentProcess.process(htmlDoc);
 }
 
 export default step(DESCRIPTION, cleanDocument);
