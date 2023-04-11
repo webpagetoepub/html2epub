@@ -40,6 +40,7 @@ export class Process {
 
   async process() {
     const results = [];
+    let result = null;
 
     for (const stepWithDependencies of this.stepsWithDependencies) {
       const params: any[] = [];
@@ -48,7 +49,7 @@ export class Process {
         params.push(results[dependencyIndex]);
       }
 
-      const result = stepWithDependencies.step.apply(null, params);
+      result = stepWithDependencies.step.apply(null, params);
 
       if (result instanceof Promise) {
         results.push(await result);
@@ -56,5 +57,7 @@ export class Process {
         results.push(result);
       }
     }
+
+    return result;
   }
 }

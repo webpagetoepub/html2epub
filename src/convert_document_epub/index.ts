@@ -5,7 +5,7 @@ import getMainContent from './get_main_content';
 import splitContentByHeadings from './split_main_content';
 import loadImages from './load_images';
 import createEPUB from './create_epub';
-import step from '../step';
+import step, { Process } from '../step';
 
 const DESCRIPTION = 'Converting HTML document into ePUB';
 
@@ -14,23 +14,40 @@ async function convertDocumentToEPub(
   htmlDoc: HTMLDocument,
   url: string,
 ) {
-  const metadata = getMetadata(htmlDoc, url);
+  const htmlDocStep = () => htmlDoc;
+  const urlStep = () => url;
 
-  cleanDocument(htmlDoc);
-  reduceHeadingLevelPage(htmlDoc);
-
-  const mainContent = getMainContent(htmlDoc);
-  const images = await loadImages(mainContent, url);
-  const splitedContents = splitContentByHeadings(mainContent, metadata);
-
-  return await createEPUB(
-    splitedContents.map(splitedContent => ({
-      title: splitedContent.title,
-      content: getHtmlContent(splitedContent.content),
-    })),
-    metadata,
-    images,
+  const convertDocumentProcess = new Process();
+  convertDocumentProcess.addStep(htmlDocStep);
+  convertDocumentProcess.addStep(urlStep);
+  convertDocumentProcess.addStep(getMetadata, [htmlDocStep, urlStep]);
+  convertDocumentProcess.addStep(cleanDocument, [htmlDocStep]);
+  convertDocumentProcess.addStep(reduceHeadingLevelPage, [htmlDocStep]);
+  convertDocumentProcess.addStep(getMainContent, [htmlDocStep]);
+  convertDocumentProcess.addStep(loadImages, [getMainContent, urlStep]);
+  convertDocumentProcess.addStep(
+    splitContentByHeadings,
+    [getMainContent, getMetadata],
   );
+  convertDocumentProcess.addStep(
+    convertSplitedContentInHTMLContent,
+    [splitContentByHeadings],
+  );
+  convertDocumentProcess.addStep(
+    createEPUB,
+    [convertSplitedContentInHTMLContent, getMetadata, loadImages],
+  );
+
+  return await convertDocumentProcess.process();
+}
+
+function convertSplitedContentInHTMLContent(
+  splitedContents: {title: string, content: Element}[],
+) {
+  return splitedContents.map(splitedContent => ({
+    title: splitedContent.title,
+    content: getHtmlContent(splitedContent.content),
+  }));
 }
 
 function getHtmlContent(element: Element) {
