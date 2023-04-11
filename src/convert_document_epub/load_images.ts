@@ -1,6 +1,6 @@
 import md5 from 'crypto-js/md5';
 
-import { loadFileFrom } from '../load_url';
+import { loadFileFrom } from './load_url';
 import { Step } from '../step';
 
 const DESCRIPTION = 'Loading images';

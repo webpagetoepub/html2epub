@@ -1,3 +1,5 @@
+import { requestTextContent } from './load_url';
+import convertTextToDOM from './convert_text_dom';
 import getMetadata from './get_metadata';
 import cleanDocument from './clean_document';
 import reduceHeadingLevelPage from './reduce_heading_level';
@@ -8,24 +10,22 @@ import createEPUB from './create_epub';
 import { Step, Process } from '../step';
 
 
-export default async function convertDocumentToEPub(
-  htmlDoc: HTMLDocument,
-  url: string,
-) {
-  const htmlDocStep = new Step(null, () => htmlDoc);
+export default async function convertDocumentToEPub(url: string) {
   const urlStep = new Step(null, () => url);
+  const loadTextContentFromStep = requestTextContent(url);
   const convertSplitedContentInHTMLContentStep = new Step(
     null,
     convertSplitedContentInHTMLContent,
   );
 
   const convertDocumentProcess = new Process();
-  convertDocumentProcess.addStep(htmlDocStep);
   convertDocumentProcess.addStep(urlStep);
-  convertDocumentProcess.addStep(getMetadata, [htmlDocStep, urlStep]);
-  convertDocumentProcess.addStep(cleanDocument, [htmlDocStep]);
-  convertDocumentProcess.addStep(reduceHeadingLevelPage, [htmlDocStep]);
-  convertDocumentProcess.addStep(getMainContent, [htmlDocStep]);
+  convertDocumentProcess.addStep(loadTextContentFromStep, [urlStep]);
+  convertDocumentProcess.addStep(convertTextToDOM, [loadTextContentFromStep]);
+  convertDocumentProcess.addStep(getMetadata, [convertTextToDOM, urlStep]);
+  convertDocumentProcess.addStep(cleanDocument, [convertTextToDOM]);
+  convertDocumentProcess.addStep(reduceHeadingLevelPage, [convertTextToDOM]);
+  convertDocumentProcess.addStep(getMainContent, [convertTextToDOM]);
   convertDocumentProcess.addStep(loadImages, [getMainContent, urlStep]);
   convertDocumentProcess.addStep(
     splitContentByHeadings,

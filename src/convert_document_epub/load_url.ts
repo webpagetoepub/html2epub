@@ -1,10 +1,11 @@
+import { Step } from '../step';
+
 const PROXY_CORS = 'https://corsproxy.io/?';
 
-export function loadDOMFrom(url: string) {
-  return requestUrl(url).then(response => response.text()).then(content => {
-    const parser = new DOMParser();
 
-    return parser.parseFromString(content, 'text/html');
+export function requestTextContent(urlDescription: string) {
+  return new Step(`Downloading "${urlDescription}"`, (url: string) => {
+    return requestUrl(url).then(response => response.text());
   });
 }
 
