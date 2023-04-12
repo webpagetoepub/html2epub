@@ -1,3 +1,5 @@
+const TEMPLATE_ERROR_MESSAGE = '[ERROR] Error on "%s"';
+
 export class Step {
   private name: string;
   private executeFunction: Function;
@@ -12,7 +14,14 @@ export class Step {
       console.log(this.name);
     }
 
-    return this.executeFunction.apply(null, params);
+    try {
+      return this.executeFunction.apply(null, params);
+    } catch (error) {
+      const message = TEMPLATE_ERROR_MESSAGE.replace('%s', this.name);
+      console.error(message);
+
+      throw error;
+    }
   }
 }
 
