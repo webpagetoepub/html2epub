@@ -10,7 +10,11 @@ import createEPUB from './create_epub';
 import { Step, Process } from '../step';
 
 
-export default async function convertDocumentToEPub(url: string) {
+export default async function convertDocumentToEPub(
+  url: string,
+  callbackStep: Function,
+  callbackLength: Function,
+) {
   const urlStep = new Step(null, () => url);
   const loadTextContentFromStep = requestTextContent(url);
   const convertSplitedContentInHTMLContentStep = new Step(
@@ -40,7 +44,7 @@ export default async function convertDocumentToEPub(url: string) {
     [convertSplitedContentInHTMLContentStep, getMetadata, loadImages],
   );
 
-  return await convertDocumentProcess.process();
+  return await convertDocumentProcess.process(callbackStep, callbackLength);
 }
 
 function convertSplitedContentInHTMLContent(

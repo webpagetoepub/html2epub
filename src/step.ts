@@ -54,11 +54,14 @@ export class Process {
     this.stepsFlow.push({ step, dependenciesIndex });
   }
 
-  async process() {
+  async process(callbackStep: Function, callbackLength: Function) {
+    const length = this.stepsFlow.length;
     const results = [];
     let result = null;
 
-    for (const stepWithDependencies of this.stepsFlow) {
+    callbackLength(length);
+    for (let i = 0; i < length; i++) {
+      const stepWithDependencies = this.stepsFlow[i];
       const params: any[] = [];
 
       for (const dependencyIndex of stepWithDependencies.dependenciesIndex) {
@@ -73,6 +76,8 @@ export class Process {
       } else {
         results.push(result);
       }
+
+      callbackStep(i + 1);
     }
 
     return result;

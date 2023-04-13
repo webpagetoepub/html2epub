@@ -26,7 +26,7 @@ async function cleanDocument(htmlDoc: HTMLDocument) {
   cleanDocumentProcess.addStep(mergeTextNodes, [firstStep]);
   cleanDocumentProcess.addStep(removeExtraWhitespacesFromDocument, [firstStep]);
 
-  await cleanDocumentProcess.process();
+  await cleanDocumentProcess.process(() => {}, () => {});
 }
 
 export default new Step(DESCRIPTION, cleanDocument);
