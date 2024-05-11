@@ -1,35 +1,23 @@
 import { Step } from '../../step';
 
-import {
-  requestTextContent as requestTextContentDirect,
-  loadFileFrom as loadFileFromDirect,
-} from './direct';
-import {
-  requestTextContent as requestTextContentProxyCodeTabs,
-  loadFileFrom as loadFileFromProxyCodeTabs,
-} from './proxy_codetabs';
-import {
-  requestTextContent as requestTextContentProxyMangaRaiku,
-  loadFileFrom as loadFileFromProxyMangaRaiku,
-} from './proxy_mangaraiku';
-import {
-  requestTextContent as requestTextContentProxyAllOrigins,
-  loadFileFrom as loadFileFromProxyAllOrigins,
-} from './proxy_allorigins';
+import directClient from './direct';
+import mangaraikuClient from './proxy_mangaraiku';
+import codetabsClient from './proxy_codetabs';
+import alloriginsClient from './proxy_allorigins';
 
 
 export function requestTextContent(urlDescription: string) {
   return new Step(`Downloading "${urlDescription}"`, (url: string) => {
-    return requestTextContentDirect(url)
-        .catch(() => requestTextContentProxyMangaRaiku(url))
-        .catch(() => requestTextContentProxyCodeTabs(url))
-        .catch(() => requestTextContentProxyAllOrigins(url));
+    return directClient.requestTextContent(url)
+        .catch(() => mangaraikuClient.requestTextContent(url))
+        .catch(() => codetabsClient.requestTextContent(url))
+        .catch(() => alloriginsClient.requestTextContent(url));
   });
 }
 
 export function loadFileFrom(url: string) {
-  return loadFileFromDirect(url)
-      .catch(() => loadFileFromProxyMangaRaiku(url))
-      .catch(() => loadFileFromProxyCodeTabs(url))
-      .catch(() => loadFileFromProxyAllOrigins(url));
+  return directClient.loadFileFrom(url)
+      .catch(() => mangaraikuClient.loadFileFrom(url))
+      .catch(() => codetabsClient.loadFileFrom(url))
+      .catch(() => alloriginsClient.loadFileFrom(url));
 }
