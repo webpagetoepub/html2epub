@@ -2,7 +2,7 @@ import jEpub from 'jepub/dist/jepub.js';
 
 import { Step } from '../step';
 
-const DESCRIPTION = 'Creating ePUB file';
+const DESCRIPTION = 'Creating EPUB file';
 
 
 export interface SplittedContent {
