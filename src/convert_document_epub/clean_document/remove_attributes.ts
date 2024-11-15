@@ -37,13 +37,33 @@ const EVENTS_ATTRIBUTES_TO_REMOVE = [].concat(
 );
 
 const INTERATIVE_ATTRIBUTES_TO_REMOVE = [
-  'contextmenu', 'draggable', 'tabindex', 'for',
+  'contextmenu', 'draggable', 'tabindex', 'for', 'autocomplete', 'capture',
+  'contenteditable', 'crossorigin', 'dirname', 'enterkeyhint', 'form',
+  'formaction', 'formenctype', 'formmethod', 'formnovalidate', 'formtarget',
+  'inputmode', 'list', 'maxlength', 'minlength', 'max', 'min', 'novalidate',
+  'pattern', 'readonly', 'required', 'spellcheck', 'step', 'usemap',
+  'autofocus',
+];
+
+const STYLE_BREAK = [
+  'background', 'bgcolor', 'border',
+];
+
+const FORM_SUBMISSION = [
+  'accept', 'accept-charset', 'action', 'enctype', 'method',
+];
+
+const USELESS = [
+  'loading', 'ping', 'slot',
 ];
 
 const ATTRIBUTES_TO_REMOVE = [].concat(
   STYLE_ATTRIBUTES_TO_REMOVE,
+  STYLE_BREAK,
   EVENTS_ATTRIBUTES_TO_REMOVE,
   INTERATIVE_ATTRIBUTES_TO_REMOVE,
+  USELESS,
+  FORM_SUBMISSION,
 );
 
 
