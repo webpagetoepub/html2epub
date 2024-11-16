@@ -26,8 +26,12 @@ function getAllImages(element: Element) {
 function replaceImagesSrcByAbsoluteSrc(images: Element[], pageURL: string) {
   for (const image of images) {
     const imageSrc = image.getAttribute('src').trim();
-    const imageAbsoluteSrc = new URL(imageSrc, pageURL).toString();
 
+    if (imageSrc.startsWith('data:')) {
+      continue;
+    }
+
+    const imageAbsoluteSrc = new URL(imageSrc, pageURL).toString();
     image.setAttribute('src', imageAbsoluteSrc);
   }
 }
