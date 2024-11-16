@@ -14,7 +14,7 @@ async function loadImages(element: Element, url: string) {
 
   const promises = imagesSrcs.map(loadImage);
 
-  return Promise.all(promises);
+  return Promise.allSettled(promises).then(results => results.filter(result => result.status === 'fulfilled').map((result: any) => result.value));
 }
 
 function getAllImages(element: Element) {
@@ -59,7 +59,13 @@ function replaceImagesByID(images: Element[]) {
 function loadImage(imageSrc: string) {
   const id = md5(imageSrc);
 
-  return loadFileFrom(imageSrc).then(blob => ({id, blob}));
+  return loadFileFrom(imageSrc).then(blob => {
+    if (!blob.type.startsWith('image/')) {
+      throw new Error();
+    }
+
+    return {id, blob};
+  });
 }
 
 export default new Step(DESCRIPTION, loadImages);
