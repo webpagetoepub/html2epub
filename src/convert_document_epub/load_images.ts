@@ -6,8 +6,8 @@ import { Step } from '../step';
 const DESCRIPTION = 'Loading images';
 
 
-async function loadImages(element: Element, url: string) {
-  const images = getAllImages(element);
+async function loadImages(mainElement: Element, url: string) {
+  const images = getAllImages(mainElement);
   replaceImagesSrcByAbsoluteSrc(images, url);
   const imagesSrcs = getAllImagesSrcs(images);
   replaceImagesByID(images);
@@ -17,9 +17,9 @@ async function loadImages(element: Element, url: string) {
   return Promise.allSettled(promises).then(results => results.filter(result => result.status === 'fulfilled').map((result: any) => result.value));
 }
 
-function getAllImages(element: Element) {
+function getAllImages(mainElement: Element) {
   return Array.from(
-    element.querySelectorAll('img[src]')
+    mainElement.querySelectorAll('img[src]')
   ).filter(element => element.getAttribute('src').trim());
 }
 

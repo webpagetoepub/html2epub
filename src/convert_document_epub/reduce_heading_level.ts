@@ -1,4 +1,5 @@
 import { Step } from '../step';
+import replaceElementWithStructure from './replace_element';
 
 const DESCRIPTION = 'Reducing the heading level';
 
@@ -27,11 +28,7 @@ function hasH1Heading(htmlDoc: HTMLDocument) {
 
 function reduceHeadingLevel(element: Element) {
   const newElement = getNewHeadingElementLowerThan(element);
-
-  copyAttributes(element, newElement);
-  copyChildNodes(element, newElement);
-
-  element.parentNode.replaceChild(newElement, element);
+  replaceElementWithStructure(element, newElement);
 }
 
 function getNewHeadingElementLowerThan(element: Element) {
@@ -46,22 +43,6 @@ function getNewHeadingElementLowerThan(element: Element) {
   }
 
   return document.createElement(HEADING_MAP[tagName]);
-}
-
-function copyAttributes(from: Element, to: Element) {
-    for (const attribute of Array.from(from.attributes)) {
-      to.setAttribute(attribute.name, attribute.value);
-    }
-}
-
-function copyChildNodes(from: Element, to: Element) {
-  const childNodesList = Array.from(from.childNodes);
-
-  for (const childNode of childNodesList) {
-    from.removeChild(childNode);
-
-    to.appendChild(childNode);
-  }
 }
 
 export default new Step(DESCRIPTION, reduceHeadingLevelPage);
