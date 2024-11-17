@@ -1,5 +1,6 @@
 import Client from './client';
 import CantLoadFileError from './cantloadfileerror';
+import FileNotAllowedError from './filenotallowederror';
 
 const PROXY_CORS = 'https://api.allorigins.win/get?url=';
 
@@ -16,7 +17,13 @@ interface AllOriginsResponse {
 
 class AllOriginsClient implements Client {
   requestTextContent(url: string) {
-    return AllOriginsClient.requestUrl(url).then(response => response.contents);
+    return AllOriginsClient.requestUrl(url).then(response => {
+      if (!response.status.content_type.includes('text/html')) {
+        throw new FileNotAllowedError(url);
+      }
+
+      return response.contents;
+    });
   }
 
   loadFileFrom(url: string) {

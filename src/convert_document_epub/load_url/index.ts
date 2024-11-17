@@ -5,6 +5,7 @@ import mangaraikuClient from './proxy_mangaraiku';
 import codetabsClient from './proxy_codetabs';
 import alloriginsClient from './proxy_allorigins';
 import Client from './client';
+import FileNotAllowedError from './filenotallowederror';
 
 
 const PROXY_CLIENTS = [mangaraikuClient, codetabsClient, alloriginsClient];
@@ -24,7 +25,13 @@ function request<T>(execute: (client: Client) => Promise<T>) {
   let lastPromise = execute(directClient);
 
   for (const client of clients) {
-    lastPromise = lastPromise.catch(() => execute(client));
+    lastPromise = lastPromise.catch(error => {
+      if (error instanceof FileNotAllowedError) {
+        throw error;
+      }
+
+      return execute(client);
+    });
   }
 
   return lastPromise;
