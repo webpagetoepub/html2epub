@@ -2,8 +2,10 @@ import md5 from 'crypto-js/md5';
 
 import { loadFileFrom } from './load_url';
 import { Step } from '../step';
+import { isEmptySvg } from './clean_document/remove_empty_svg';
 
 const DESCRIPTION = 'Loading images';
+const parser = new DOMParser();
 
 
 async function loadImages(mainElement: Element, url: string) {
@@ -59,9 +61,17 @@ function replaceImagesByID(images: Element[]) {
 function loadImage(imageSrc: string) {
   const id = md5(imageSrc);
 
-  return loadFileFrom(imageSrc).then(blob => {
+  return loadFileFrom(imageSrc).then(async (blob) => {
     if (!blob.type.startsWith('image/')) {
       throw new Error();
+    }
+
+    if (blob.type === 'image/svg+xml') {
+      const svgContent = await blob.text();
+      const svg = parser.parseFromString(svgContent, 'text/xml');
+      if (isEmptySvg(svg)) {
+        throw new Error();
+      }
     }
 
     return {id, blob};

@@ -6,6 +6,7 @@ import removeDataAttributes from './remove_data_attributes';
 import removeAttributes from './remove_attributes';
 import mergeTextNodes from './merge_text_nodes';
 import removeExtraWhitespacesFromDocument from './remove_whitespaces';
+import removeEmptySVGs from './remove_empty_svg';
 import { Step, Process } from '../../step';
 
 const DESCRIPTION = 'Cleaning HTML document';
@@ -25,6 +26,7 @@ async function cleanDocument(htmlDoc: HTMLDocument) {
   cleanDocumentProcess.addStep(removeAttributes, [firstStep]);
   cleanDocumentProcess.addStep(mergeTextNodes, [firstStep]);
   cleanDocumentProcess.addStep(removeExtraWhitespacesFromDocument, [firstStep]);
+  cleanDocumentProcess.addStep(removeEmptySVGs, [firstStep]);
 
   await cleanDocumentProcess.process(() => {}, () => {});
 }
