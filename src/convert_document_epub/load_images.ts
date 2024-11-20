@@ -8,22 +8,27 @@ import { isEmptySvg } from './clean_document/remove_empty_svg';
 const DESCRIPTION = 'Loading images';
 const parser = new DOMParser();
 
+interface LoadedImage {
+  id: string;
+  blob: Blob;
+}
+
 
 async function loadImages(mainElement: Element, url: string) {
+  const loadImage = memoizedLoadImage();
+
   const images = getAllImages(mainElement)
       .filter(image => !image.getAttribute('src').startsWith('data:'));
-  replaceImagesSrcByAbsoluteSrc(images, url);
-  const imagesSrcs = getAllImagesSrcs(images);
+  images.forEach(image => replaceImageSrcByAbsoluteSrc(image, url));
+  const promises = images.map(image => loadImage(image).then(loadedImage => {
+    replaceImageByID(image, loadedImage);
 
-  const promises = Object.entries(imagesSrcs).map(([src, images]) => {
-    return loadImage(src).then(loadedImage => {
-      images.forEach(image => replaceImageByID(image, loadedImage.id, loadedImage.blob));
+    return loadedImage;
+  }));
 
-      return loadedImage;
-    });
-  });
-
-  return Promise.allSettled(promises).then(results => results.filter(result => result.status === 'fulfilled').map((result: any) => result.value));
+  return Promise.allSettled(promises)
+      .then(settledPromises => settledPromises.filter(promise => promise.status === 'fulfilled').map((promise: any) => promise.value))
+      .then(results => Array.from(new Set(results)));
 }
 
 function getAllImages(mainElement: Element) {
@@ -32,57 +37,54 @@ function getAllImages(mainElement: Element) {
   ).filter(element => element.getAttribute('src').trim());
 }
 
-function replaceImagesSrcByAbsoluteSrc(images: Element[], pageURL: string) {
-  for (const image of images) {
-    const imageSrc = image.getAttribute('src').trim();
-    const imageAbsoluteSrc = new URL(imageSrc, pageURL).toString();
-    image.setAttribute('src', imageAbsoluteSrc);
-  }
+function replaceImageSrcByAbsoluteSrc(image: Element, pageURL: string) {
+  const srcURL = image.getAttribute('src').trim();
+  const srcAbsoluteURL = new URL(srcURL, pageURL).toString();
+  image.setAttribute('src', srcAbsoluteURL);
 }
 
-function getAllImagesSrcs(images: Element[]) {
-  const imagesUrls: { [src: string]: Element[]} = {};
-
-  for (const image of images) {
-    const src = image.getAttribute('src');
-    if (!(src in imagesUrls)) {
-      imagesUrls[src] = [];
-    }
-
-    imagesUrls[src].push(image);
-  }
-
-  return imagesUrls;
-}
-
-function replaceImageByID(image: Element, id: string, blob: Blob) {
-  let extension = mime2ext(blob.type);
+function replaceImageByID(image: Element, loadedImage: LoadedImage) {
+  let extension = mime2ext(loadedImage.blob.type);
   if (extension === null) {
     extension = '';
   } else {
     extension = '.' + extension;
   }
-  image.setAttribute('src', `assets/${id}${extension}`);
+
+  image.setAttribute('src', `assets/${loadedImage.id}${extension}`);
 }
 
-function loadImage(imageSrc: string) {
-  const id = md5(imageSrc);
+function memoizedLoadImage() {
+  let cache: {[src: string]: Promise<LoadedImage>} = {};
 
-  return loadFileFrom(imageSrc).then(async (blob) => {
-    if (!blob.type.startsWith('image/')) {
-      throw new Error();
+  return (image: Element) => {
+    const srcURL = image.getAttribute('src');
+    if (srcURL in cache) {
+      return cache[srcURL];
     }
 
-    if (blob.type === 'image/svg+xml') {
-      const svgContent = await blob.text();
-      const svg = parser.parseFromString(svgContent, 'text/xml');
-      if (isEmptySvg(svg)) {
+    const promise = loadFileFrom(srcURL).then(async (blob) => {
+      if (!blob.type.startsWith('image/')) {
         throw new Error();
       }
-    }
 
-    return {id, blob};
-  });
+      if (blob.type === 'image/svg+xml') {
+        const svgContent = await blob.text();
+        const svg = parser.parseFromString(svgContent, 'text/xml');
+        if (isEmptySvg(svg)) {
+          throw new Error();
+        }
+      }
+
+      const id = md5(srcURL);
+
+      return {id, blob};
+    });
+
+    cache[srcURL] = promise;
+
+    return promise;
+  }
 }
 
 export default new Step(DESCRIPTION, loadImages);
