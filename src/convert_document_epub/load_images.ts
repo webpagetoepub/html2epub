@@ -5,6 +5,8 @@ import { loadFileFrom } from './load_url';
 import { Step } from '../step';
 import { isEmptySvg } from './clean_document/remove_empty_svg';
 
+import NO_IMAGE_DATA_URL from '../../img/no-image.png';
+
 const DESCRIPTION = 'Loading images';
 const parser = new DOMParser();
 
@@ -16,10 +18,11 @@ interface LoadedImage {
 
 async function loadImages(mainElement: Element, url: string) {
   const loadImage = memoizedLoadImage();
+  const replaceImageSrcByAbsoluteSrc = replaceImageSrcByPageURLAbsoluteSrc(url);
 
   const images = getAllImages(mainElement)
       .filter(image => !image.getAttribute('src').startsWith('data:'));
-  images.forEach(image => replaceImageSrcByAbsoluteSrc(image, url));
+  images.forEach(replaceImageSrcByAbsoluteSrc);
   const promises = images.map(image => loadImage(image).then(loadedImage => {
     replaceImageByID(image, loadedImage);
 
@@ -37,10 +40,12 @@ function getAllImages(mainElement: Element) {
   ).filter(element => element.getAttribute('src').trim());
 }
 
-function replaceImageSrcByAbsoluteSrc(image: Element, pageURL: string) {
-  const srcURL = image.getAttribute('src').trim();
-  const srcAbsoluteURL = new URL(srcURL, pageURL).toString();
-  image.setAttribute('src', srcAbsoluteURL);
+function replaceImageSrcByPageURLAbsoluteSrc(pageURL: string) {
+  return (image: Element) => {
+    const srcURL = image.getAttribute('src').trim();
+    const srcAbsoluteURL = new URL(srcURL, pageURL).toString();
+    image.setAttribute('src', srcAbsoluteURL);
+  };
 }
 
 function replaceImageByID(image: Element, loadedImage: LoadedImage) {
@@ -79,6 +84,10 @@ function memoizedLoadImage() {
       const id = md5(srcURL);
 
       return {id, blob};
+    }).catch(error => {
+      return fetch(NO_IMAGE_DATA_URL)
+          .then(response => response.blob())
+          .then(blob => ({id: 'no-image', blob}));
     });
 
     cache[srcURL] = promise;
