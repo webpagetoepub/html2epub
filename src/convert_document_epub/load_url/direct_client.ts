@@ -5,13 +5,13 @@ import FileNotAllowedError from './filenotallowederror';
 
 export default class DirectClient implements Client {
   requestTextContent(url: string) {
-    return DirectClient.requestUrl(url).then(async (response) => {
-      const blob = await response.blob();
-      if (blob.type !== 'text/html') {
+    return DirectClient.requestUrl(url).then(response => {
+      const contentType = response.headers.get('content-type');
+      if (!contentType.includes('text/html')) {
         throw new FileNotAllowedError(url);
       }
 
-      return await response.text();
+      return response.text();
     });
   }
 
