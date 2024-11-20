@@ -1,18 +1,10 @@
 import Client from './client';
 import CantLoadFileError from './cantloadfileerror';
-import FileNotAllowedError from './filenotallowederror';
 
 
 export default class DirectClient implements Client {
   requestTextContent(url: string) {
-    return DirectClient.requestUrl(url).then(response => {
-      const contentType = response.headers.get('content-type');
-      if (!contentType.includes('text/html')) {
-        throw new FileNotAllowedError(url);
-      }
-
-      return response.text();
-    });
+    return DirectClient.requestUrl(url).then(response => response.text());
   }
 
   loadFileFrom(url: string) {
