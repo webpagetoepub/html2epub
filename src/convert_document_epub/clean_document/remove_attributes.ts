@@ -45,17 +45,18 @@ const INTERATIVE_ATTRIBUTES_TO_REMOVE = [
   'autofocus',
 ];
 
-const STYLE_BREAK = [
-  'background', 'bgcolor', 'border',
-];
+const STYLE_BREAK = ['background', 'bgcolor', 'border'];
 
 const FORM_SUBMISSION = [
   'accept', 'accept-charset', 'action', 'enctype', 'method',
 ];
 
 const USELESS = [
-  'loading', 'ping', 'slot',
+  'loading', 'ping', 'slot', 'sizes', 'decoding', 'crossorigin',
+  'elementtiming', 'fetchpriority', 'referrerpolicy', 'sizes',
 ];
+
+const OFFLINE = ['srcset', 'attributionsrc'];
 
 const ATTRIBUTES_TO_REMOVE = [].concat(
   STYLE_ATTRIBUTES_TO_REMOVE,
@@ -64,6 +65,7 @@ const ATTRIBUTES_TO_REMOVE = [].concat(
   INTERATIVE_ATTRIBUTES_TO_REMOVE,
   USELESS,
   FORM_SUBMISSION,
+  OFFLINE,
 );
 
 
