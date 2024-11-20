@@ -11,3 +11,6 @@ declare module 'jepub/dist/jepub.js' {
     static html2text(html: string, noBr: boolean): Promise<Blob>;
   }
 }
+declare module 'jepub/src/utils.js' {
+  export function mime2ext(mime: string): string | null;
+}
