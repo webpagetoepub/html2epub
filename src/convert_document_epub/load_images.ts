@@ -1,5 +1,4 @@
 import md5 from 'crypto-js/md5';
-import { mime2ext } from 'jepub/src/utils.js';
 
 import { loadFileFrom } from './load_url';
 import { Step } from '../step';
@@ -49,14 +48,8 @@ function replaceImageSrcByPageURLAbsoluteSrc(pageURL: string) {
 }
 
 function replaceImageByID(image: Element, loadedImage: LoadedImage) {
-  let extension = mime2ext(loadedImage.blob.type);
-  if (extension === null) {
-    extension = '';
-  } else {
-    extension = '.' + extension;
-  }
-
-  image.setAttribute('src', `assets/${loadedImage.id}${extension}`);
+  const comment = document.createComment(`<%= image['${loadedImage.id}'] %>`);
+  image.parentNode.replaceChild(comment, image)
 }
 
 function memoizedLoadImage() {
