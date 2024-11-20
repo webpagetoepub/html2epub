@@ -10,7 +10,8 @@ const parser = new DOMParser();
 
 
 async function loadImages(mainElement: Element, url: string) {
-  const images = getAllImages(mainElement);
+  const images = getAllImages(mainElement)
+      .filter(image => !image.getAttribute('src').startsWith('data:'));
   replaceImagesSrcByAbsoluteSrc(images, url);
   const imagesSrcs = getAllImagesSrcs(images);
 
@@ -34,11 +35,6 @@ function getAllImages(mainElement: Element) {
 function replaceImagesSrcByAbsoluteSrc(images: Element[], pageURL: string) {
   for (const image of images) {
     const imageSrc = image.getAttribute('src').trim();
-
-    if (imageSrc.startsWith('data:')) {
-      continue;
-    }
-
     const imageAbsoluteSrc = new URL(imageSrc, pageURL).toString();
     image.setAttribute('src', imageAbsoluteSrc);
   }

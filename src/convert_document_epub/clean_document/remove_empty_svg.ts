@@ -5,11 +5,23 @@ const DESCRIPTION = 'Remove empty SVGs';
 
 function removeEmptySVGs(htmlDoc: HTMLDocument) {
   const svgs = Array.from(htmlDoc.querySelectorAll('svg'));
-  for (const svg of svgs) {
-    if (isEmptySvg(svg)) {
-      svg.remove();
-    }
-  }
+  svgs.filter(isEmptySvg).forEach(svg => svg.remove());
+
+  const parser = new DOMParser();
+  const images = Array.from(htmlDoc.querySelectorAll('img[src]'));
+  images
+      .filter(image => image.getAttribute('src').startsWith('data:image/svg+xml'))
+      .forEach(image => {
+        const src = image.getAttribute('src');
+        fetch(src)
+            .then(response => response.text())
+            .then(content => parser.parseFromString(content, 'text/xml'))
+            .then(svg => {
+              if (isEmptySvg(svg)) {
+                image.remove();
+              }
+            });
+      });
 }
 
 export function isEmptySvg(svg: XMLDocument | SVGElement) {
