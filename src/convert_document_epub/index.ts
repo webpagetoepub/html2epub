@@ -8,7 +8,7 @@ import splitContentByHeadings, { SplittedElement } from './split_main_content';
 import convertNoscriptToDiv from './convert_noscript_div';
 import loadImages from './load_images';
 import createEPUB from './create_epub';
-import fixUrls from './fix_urls';
+import fixLinks from './fix_links';
 import { Step, Process } from '../step';
 
 
@@ -33,7 +33,7 @@ export default async function convertDocumentToEPub(
   convertDocumentProcess.addStep(reduceHeadingLevelPage, [convertTextToDOM]);
   convertDocumentProcess.addStep(getMainContent, [convertTextToDOM]);
   convertDocumentProcess.addStep(convertNoscriptToDiv, [getMainContent]);
-  convertDocumentProcess.addStep(fixUrls, [getMainContent, urlStep]);
+  convertDocumentProcess.addStep(fixLinks, [getMainContent, urlStep]);
   convertDocumentProcess.addStep(loadImages, [getMainContent, urlStep]);
   convertDocumentProcess.addStep(
     splitContentByHeadings,

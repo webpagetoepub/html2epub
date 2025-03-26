@@ -1,8 +1,9 @@
-import { Step, Process } from '../step';
+import { Step, Process } from '../../step';
+import replaceElementWithStructure from '../replace_element';
 
-const DESCRIPTION = 'Fix URLs';
+const DESCRIPTION = 'Fix links';
 
-async function fixUrls(mainElement: Element, originUrl: string) {
+async function fixLinks(mainElement: Element, originUrl: string) {
   const linksElements = mainElement.querySelectorAll(`a[href]`);
 
   for (const linkElement of Array.from(linksElements)) {
@@ -22,7 +23,7 @@ function convertUrlToAbsolute(href: string, originUrl: string) {
 
 function retrieveAnchorIfLocalUrl(href: string, originUrl: string) {
   if (isSamePage(originUrl, href)) {
-    var anchor = href.split('#')[1];
+    const anchor = href.split('#')[1];
 
     if (anchor) {
       return `#${anchor}`;
@@ -33,10 +34,10 @@ function retrieveAnchorIfLocalUrl(href: string, originUrl: string) {
 }
 
 function isSamePage(originUrl: string, url: string) {
-  var originUrlWithoutAnchor = originUrl.split('#')[0];
-  var urlWithoutAnchor = url.split('#')[0];
+  const originUrlWithoutAnchor = originUrl.split('#')[0];
+  const urlWithoutAnchor = url.split('#')[0];
 
   return originUrlWithoutAnchor === urlWithoutAnchor;
 }
 
-export default new Step(DESCRIPTION, fixUrls);
+export default new Step(DESCRIPTION, fixLinks);
