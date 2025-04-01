@@ -1,12 +1,11 @@
-import { Step, Process } from '../../step';
-import replaceElementWithStructure from '../replace_element';
+import { Step } from '../../step';
 
 const DESCRIPTION = 'Fix links';
 
-function fixLinks(mainElement: Element, originUrl: string) {
-  const linksElements = mainElement.querySelectorAll('a[href]');
+function fixLinks(splitedContents: Element[], originUrl: string) {
+  const linksElements = splitedContents.flatMap(splitedContent => Array.from(splitedContent.querySelectorAll('a[href]')));
 
-  for (const linkElement of Array.from(linksElements)) {
+  for (const linkElement of linksElements) {
     let newUrl = linkElement.getAttribute('href');
     newUrl = convertUrlToAbsolute(newUrl, originUrl);
     newUrl = retrieveAnchorIfLocalUrl(newUrl, originUrl);
@@ -14,7 +13,7 @@ function fixLinks(mainElement: Element, originUrl: string) {
     linkElement.setAttribute('href', newUrl);
   }
 
-  return mainElement;
+  return splitedContents;
 }
 
 function convertUrlToAbsolute(href: string, originUrl: string) {

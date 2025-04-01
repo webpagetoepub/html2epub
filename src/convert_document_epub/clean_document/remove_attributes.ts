@@ -2,7 +2,7 @@ import { Step } from '../../step';
 
 const DESCRIPTION = 'Removing unused element attributes';
 
-const STYLE_ATTRIBUTES_TO_REMOVE = ['style', 'class', 'id'];
+const STYLE_ATTRIBUTES_TO_REMOVE = ['style', 'class'];
 
 const WINDOW_EVENT_ATTRIBUTES_TO_REMOVE = [
   'onafterprint', 'onbeforeprint', 'onbeforeunload', 'onerror', 'onhashchange',

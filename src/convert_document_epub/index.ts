@@ -33,12 +33,12 @@ export default async function convertDocumentToEPub(
   convertDocumentProcess.addStep(reduceHeadingLevelPage, [convertTextToDOM]);
   convertDocumentProcess.addStep(getMainContent, [convertTextToDOM]);
   convertDocumentProcess.addStep(convertNoscriptToDiv, [getMainContent]);
-  convertDocumentProcess.addStep(fixLinks, [getMainContent, urlStep]);
   convertDocumentProcess.addStep(loadImages, [getMainContent, urlStep]);
   convertDocumentProcess.addStep(
     splitContentByHeadings,
     [getMainContent, getMetadata],
   );
+  convertDocumentProcess.addStep(fixLinks, [splitContentByHeadings, urlStep]);
   convertDocumentProcess.addStep(
     convertSplitedContentInHTMLContentStep,
     [splitContentByHeadings],
