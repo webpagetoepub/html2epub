@@ -3,14 +3,14 @@ import replaceElementWithStructure from '../replace_element';
 
 const DESCRIPTION = 'Fix links';
 
-async function fixLinks(mainElement: Element, originUrl: string) {
-  const linksElements = mainElement.querySelectorAll(`a[href]`);
+function fixLinks(mainElement: Element, originUrl: string) {
+  const linksElements = mainElement.querySelectorAll('a[href]');
 
   for (const linkElement of Array.from(linksElements)) {
     let newUrl = linkElement.getAttribute('href');
     newUrl = convertUrlToAbsolute(newUrl, originUrl);
     newUrl = retrieveAnchorIfLocalUrl(newUrl, originUrl);
-    
+
     linkElement.setAttribute('href', newUrl);
   }
 
