@@ -1,6 +1,5 @@
 import Client from './client';
-import CantLoadFileError from './cantloadfileerror';
-
+import fetchWithTimeout from './fetch_with_timeout';
 
 export default class DirectClient implements Client {
   requestTextContent(url: string) {
@@ -12,12 +11,6 @@ export default class DirectClient implements Client {
   }
 
   static requestUrl(url: string) {
-    return fetch(url).then(response => {
-      if (!response.ok) {
-        throw new CantLoadFileError(url);
-      }
-
-      return response;
-    });
+    return fetchWithTimeout(url);
   }
 }

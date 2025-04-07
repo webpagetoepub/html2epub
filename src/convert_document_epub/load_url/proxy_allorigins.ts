@@ -1,4 +1,5 @@
 import Client from './client';
+import fetchWithTimeout from './fetch_with_timeout';
 import CantLoadFileError from './cantloadfileerror';
 
 const PROXY_CORS = 'https://api.allorigins.win/get?url=';
@@ -28,13 +29,7 @@ class AllOriginsClient implements Client {
   static requestUrl(url: string) {
     const newUrl = PROXY_CORS + encodeURIComponent(url);
 
-    return fetch(newUrl).then(response => {
-      if (!response.ok) {
-        throw new CantLoadFileError(url);
-      }
-
-      return response.json();
-    }).then((json: AllOriginsResponse) => {
+    return fetchWithTimeout(newUrl).then(response => response.json()).then((json: AllOriginsResponse) => {
       const http_code = json.status.http_code;
       if ((http_code < 200) && (http_code > 299)) {
         throw new CantLoadFileError(url);
