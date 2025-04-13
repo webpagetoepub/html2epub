@@ -1,4 +1,4 @@
-declare module 'jepub/dist/jepub.js' {
+declare module 'jepub/dist/jepub.min.js' {
   export default class jEpub {
     init(parameters: any): void;
     date(date: Date): void;

@@ -1,4 +1,4 @@
-import jEpub from 'jepub/dist/jepub.js';
+import jEpub from 'jepub/dist/jepub.min.js';
 
 import { Step } from '../step';
 
