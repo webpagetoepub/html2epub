@@ -1,6 +1,7 @@
 import { Step } from '../step';
 
 const DESCRIPTION = 'Splitting the main content from HTML document by headings';
+const REMAINING_TEXT_LIMIT = 80;
 
 
 export interface SplittedElement {
@@ -20,17 +21,15 @@ function splitMainContentByHeadings(
   }
 
   if (headings.length > 1) {
-    headings = Array.from(mainContent.querySelectorAll('h1, h2'));
-
-    return splitMainContent(mainContent, headings);
+    return splitMainContent(mainContent, metadata, headings);
   }
 
-  headings = Array.from(mainContent.querySelectorAll('h1, h2, h3'));
+  headings = Array.from(mainContent.querySelectorAll('h2, h3'));
 
-  return splitMainContent(mainContent, headings);
+  return splitMainContent(mainContent, metadata, headings);
 }
 
-function splitMainContent(mainContent: Element, elementReferences: Element[]) {
+function splitMainContent(mainContent: Element, metadata: any, elementReferences: Element[]) {
   const contentElements = [];
 
   for (const elementReference of elementReferences.reverse()) {
@@ -48,6 +47,15 @@ function splitMainContent(mainContent: Element, elementReferences: Element[]) {
 
     if (newRootContentElement.innerText.trim() !== '') {
       contentElements.push({title, element: newRootContentElement});
+    }
+  }
+
+  const remainingText = mainContent.textContent.trim();
+  if (remainingText.length >= REMAINING_TEXT_LIMIT) {
+    const newRootContentElement = document.createElement('div');
+    moveElementsToNewParent(mainContent, newRootContentElement);
+    if (newRootContentElement.innerText.trim() !== '') {
+      contentElements.push({title: metadata.title, element: newRootContentElement});
     }
   }
 
@@ -109,6 +117,18 @@ function moveElementsToNewParentAfter(
     } else if (childNode === referenceElement) {
       foundDElement = true;
     }
+  }
+}
+
+function moveElementsToNewParent(
+  currentParentElement: Element,
+  newParentElement: Element,
+) {
+  const childNodesList = Array.from(currentParentElement.childNodes);
+
+  for (const childNode of childNodesList) {
+    currentParentElement.removeChild(childNode);
+    newParentElement.appendChild(childNode);
   }
 }
 
