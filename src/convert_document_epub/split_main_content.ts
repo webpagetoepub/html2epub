@@ -13,19 +13,21 @@ function splitMainContentByHeadings(
   mainContent: Element,
   metadata: any,
 ): SplittedElement[] {
-  const heading1Tags = Array.from(mainContent.getElementsByTagName('h2'));
+  let headings = Array.from(mainContent.getElementsByTagName('h2'));
 
-  if (heading1Tags.length === 0) {
+  if (headings.length === 0) {
     return [{title: metadata.title, element: mainContent}];
   }
 
-  if (heading1Tags.length > 1) {
-    return splitMainContent(mainContent, heading1Tags);
+  if (headings.length > 1) {
+    headings = Array.from(mainContent.querySelectorAll('h1, h2'));
+
+    return splitMainContent(mainContent, headings);
   }
 
-  const heading2Tags = Array.from(mainContent.getElementsByTagName('h3'));
+  headings = Array.from(mainContent.querySelectorAll('h1, h2, h3'));
 
-  return splitMainContent(mainContent, heading1Tags.concat(heading2Tags));
+  return splitMainContent(mainContent, headings);
 }
 
 function splitMainContent(mainContent: Element, elementReferences: Element[]) {
@@ -41,7 +43,7 @@ function splitMainContent(mainContent: Element, elementReferences: Element[]) {
       parentElement = parentElement.parentNode as Element;
     }
 
-    let newRootContentElement = document.createElement('div');
+    const newRootContentElement = document.createElement('div');
     const title = recursiveSplitContent(ancestors, newRootContentElement);
 
     if (newRootContentElement.innerText.trim() !== '') {
