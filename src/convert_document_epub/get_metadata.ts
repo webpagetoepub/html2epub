@@ -5,13 +5,27 @@ const DESCRIPTION = 'Retrieving metadata from HTML document';
 
 function getMetadata(htmlDoc: HTMLDocument, url: string) {
   return {
-    title: htmlDoc.title,
+    title: getTitle(htmlDoc, url),
     date: getDate(htmlDoc),
     author: getAuthor(htmlDoc),
     publisher: getPublisher(htmlDoc) || url,
     uuid: url,
     description: getDescription(htmlDoc),
     tags: getTags(htmlDoc),
+  }
+}
+
+function getTitle(htmlDoc: HTMLDocument, url: string) {
+  if (htmlDoc.title) {
+    return htmlDoc.title;
+  }
+
+  try {
+    const urlObject = new URL(url);
+
+    return urlObject.hostname;
+  } catch (e) {
+    return url;
   }
 }
 
