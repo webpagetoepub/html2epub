@@ -26,7 +26,7 @@ function removeBrokenAnchorLinks(splitedContents: Element[]) {
 function indexOfAnchor(splitedContents: Element[], anchor: string) {
   for (let i = 0, length = splitedContents.length; i < length; i++) {
     const splitedContent = splitedContents[i];
-    const anchorElement = splitedContent.querySelector(`#${anchor},a[name="${anchor}"]`);
+    const anchorElement = splitedContent.querySelector(`[id="${anchor}"],a[name="${anchor}"]`);
 
     if (anchorElement !== null) {
       return i;
