@@ -1,4 +1,4 @@
-import jEpub, { jEpubUpdateCallbackDetails } from 'jepub/dist/jepub.min.js';
+import jEpub from 'jepub';
 
 import { Step } from '../step';
 
@@ -37,13 +37,13 @@ async function createEPUB(
     jepub.add(content.title, content.content);
   }
 
-  const epub = await jepub.generate('blob', (metadata: jEpubUpdateCallbackDetails) => {
+  const epub = await jepub.generate('blob', (metadata: { percent: number, currentFile: string }) => {
     console.log('progression: ' + metadata.percent.toFixed(2) + ' %');
 
     if (metadata.currentFile) {
       console.log('current file = ' + metadata.currentFile);
     }
-  });
+  }) as Blob;
 
   return {title: metadata.title, epub};
 }
