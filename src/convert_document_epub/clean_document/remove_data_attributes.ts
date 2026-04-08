@@ -20,11 +20,11 @@ function removeDataAttributes(htmlDoc: HTMLDocument) {
   visitAllElements(htmlDoc, removeDataAttributesElement);
 }
 
-function visitAllElements(htmlDoc: HTMLDocument, callback: Function) {
+function visitAllElements(htmlDoc: HTMLDocument, callback: (element: Element) => void) {
   visitElement(htmlDoc.documentElement, callback);
 }
 
-function visitElement(element: Element, callback: Function) {
+function visitElement(element: Element, callback: (element: Element) => void) {
   callback(element);
 
   for (const child of Array.from(element.children)) {

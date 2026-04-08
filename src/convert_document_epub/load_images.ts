@@ -29,7 +29,7 @@ async function loadImages(mainElement: Element, url: string) {
   }));
 
   return Promise.allSettled(promises)
-      .then(settledPromises => settledPromises.filter(promise => promise.status === 'fulfilled').map((promise: any) => promise.value))
+      .then(settledPromises => settledPromises.filter(promise => promise.status === 'fulfilled').map((promise: PromiseFulfilledResult<LoadedImage>) => promise.value))
       .then(results => Array.from(new Set(results)));
 }
 
@@ -53,7 +53,7 @@ function replaceImageByID(image: Element, loadedImage: LoadedImage) {
 }
 
 function memoizedLoadImage() {
-  let cache: {[src: string]: Promise<LoadedImage>} = {};
+  const cache: {[src: string]: Promise<LoadedImage>} = {};
 
   return (image: Element) => {
     const srcURL = image.getAttribute('src');
@@ -77,7 +77,7 @@ function memoizedLoadImage() {
       const id = md5(srcURL);
 
       return {id, blob};
-    }).catch(error => {
+    }).catch(_ => {
       return fetch(NO_IMAGE_DATA_URL)
           .then(response => response.blob())
           .then(blob => ({id: 'no-image', blob}));

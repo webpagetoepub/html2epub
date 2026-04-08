@@ -14,8 +14,8 @@ import { Step, Process } from '../step';
 
 export default async function convertDocumentToEPub(
   url: string,
-  callbackStep: Function,
-  callbackLength: Function,
+  callbackStep: (currentStep: number) => void,
+  callbackLength: (length: number) => void,
 ) {
   const urlStep = new Step(null, () => url);
   const loadTextContentFromStep = requestTextContent(url);
@@ -70,6 +70,6 @@ function getHtmlContent(element: Element) {
 }
 
 function replaceCommentsImagesByImages(content: string) {
-  return content.replace(/<!\-\-\s*<%= image\[/g, '<%= image[')
-                .replace(/] %>\s*\-\->/g, '] %>');
+  return content.replace(/<!--\s*<%= image\[/g, '<%= image[')
+                .replace(/] %>\s*-->/g, '] %>');
 }

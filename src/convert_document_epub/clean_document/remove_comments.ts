@@ -16,7 +16,7 @@ function removeAllComments(htmlDoc: HTMLDocument) {
   );
   let node: Comment;
 
-  while (node = iterator.nextNode() as Comment) {
+  while ((node = iterator.nextNode() as Comment) !== null) {
     comments.push(node);
   }
 

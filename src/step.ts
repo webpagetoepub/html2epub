@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 const TEMPLATE_ERROR_MESSAGE = '[ERROR] Error on "%s"';
 
 export class Step {
   private name: string;
-  private executeFunction: Function;
+  private executeFunction: (...params: any[]) => any;
 
-  constructor(name: string, executeFunction: Function) {
+  constructor(name: string, executeFunction: (...params: any[]) => any) {
     this.name = name;
     this.executeFunction = executeFunction;
   }
@@ -15,7 +17,7 @@ export class Step {
     }
 
     try {
-      return this.executeFunction.apply(null, params);
+      return this.executeFunction(...params);
     } catch (error) {
       const message = TEMPLATE_ERROR_MESSAGE.replace('%s', this.name);
       console.error(message);
@@ -54,7 +56,7 @@ export class Process {
     this.stepsFlow.push({ step, dependenciesIndex });
   }
 
-  async process(callbackStep: Function, callbackLength: Function) {
+  async process(callbackStep: (currentStep: number) => void, callbackLength: (length: number) => void) {
     const length = this.stepsFlow.length;
     const results = [];
     let result = null;
@@ -69,7 +71,7 @@ export class Process {
       }
 
       const step = stepWithDependencies.step;
-      result = step.run.apply(step, params);
+      result = step.run(...params);
 
       if (result instanceof Promise) {
         results.push(await result);

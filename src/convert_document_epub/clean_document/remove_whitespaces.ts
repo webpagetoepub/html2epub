@@ -17,7 +17,7 @@ function removeExtraWhitespacesFromDocument(
   );
   let node;
 
-  while (node = iterator.nextNode()) {
+  while ((node = iterator.nextNode()) !== null) {
     removeExtraWhitespaces(node as Text);
   }
 }

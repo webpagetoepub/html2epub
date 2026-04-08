@@ -23,7 +23,7 @@ function removeEmptyElements(htmlDoc: HTMLDocument) {
   );
   let node: HTMLElement;
 
-  while (node = iterator.nextNode() as HTMLElement) {
+  while ((node = iterator.nextNode() as HTMLElement) !== null) {
     elements.push(node);
   }
 

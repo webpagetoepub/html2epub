@@ -12,7 +12,7 @@ export interface SplittedElement {
 
 function splitMainContentByHeadings(
   mainContent: Element,
-  metadata: any,
+  metadata: {title: string},
 ): SplittedElement[] {
   let headings = Array.from(mainContent.getElementsByTagName('h2'));
 
@@ -29,7 +29,7 @@ function splitMainContentByHeadings(
   return splitMainContent(mainContent, metadata, headings);
 }
 
-function splitMainContent(mainContent: Element, metadata: any, elementReferences: Element[]) {
+function splitMainContent(mainContent: Element, metadata: {title: string}, elementReferences: Element[]) {
   const contentElements = [];
 
   for (const elementReference of elementReferences.reverse()) {

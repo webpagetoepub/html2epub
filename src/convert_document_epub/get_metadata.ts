@@ -24,7 +24,7 @@ function getTitle(htmlDoc: HTMLDocument, url: string) {
     const urlObject = new URL(url);
 
     return urlObject.hostname;
-  } catch (e) {
+  } catch (_) {
     return url;
   }
 }
@@ -36,7 +36,9 @@ function getDate(htmlDoc: HTMLDocument) {
   if (datePublishedStructuredMetadata) {
     try {
       return new Date(datePublishedStructuredMetadata.getAttribute('content'));
-    } catch (e) { }
+    } catch (_) {
+      // continue regardless of error
+    }
   }
 
   const startDate = htmlDoc.querySelector(
@@ -45,7 +47,9 @@ function getDate(htmlDoc: HTMLDocument) {
   if (startDate) {
     try {
       return new Date(startDate.getAttribute('datetime'));
-    } catch (e) { }
+    } catch (_) {
+      // continue regardless of error
+    }
   }
 
   const contentDate = getContentFromMetatags(
@@ -59,7 +63,9 @@ function getDate(htmlDoc: HTMLDocument) {
   if (contentDate) {
     try {
       return new Date(contentDate);
-    } catch (e) { }
+    } catch (_) {
+      // continue regardless of error
+    }
   }
 
   return new Date();

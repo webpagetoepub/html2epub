@@ -24,7 +24,7 @@ function request<T>(execute: (client: Client) => Promise<T>) {
   let lastPromise = execute(directClient);
 
   for (const client of clients) {
-    lastPromise = lastPromise.catch(error => execute(client));
+    lastPromise = lastPromise.catch(_ => execute(client));
   }
 
   return lastPromise;

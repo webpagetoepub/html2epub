@@ -1,4 +1,4 @@
-import jEpub from 'jepub/dist/jepub.min.js';
+import jEpub, { jEpubUpdateCallbackDetails } from 'jepub/dist/jepub.min.js';
 
 import { Step } from '../step';
 
@@ -10,10 +10,19 @@ export interface SplittedContent {
   content: string;
 }
 
+export interface Metadata {
+  title: string;
+  date: Date;
+  author: string;
+  publisher: string;
+  uuid: string;
+  description: string;
+  tags: string[];
+}
 
 async function createEPUB(
   contents: SplittedContent[],
-  metadata: any,
+  metadata: Metadata,
   images: {id: string, blob: Blob}[],
 ): Promise<{title: string, epub: Blob}> {
   const jepub = new jEpub();
@@ -28,7 +37,7 @@ async function createEPUB(
     jepub.add(content.title, content.content);
   }
 
-  const epub = await jepub.generate('blob', (metadata: any) => {
+  const epub = await jepub.generate('blob', (metadata: jEpubUpdateCallbackDetails) => {
     console.log('progression: ' + metadata.percent.toFixed(2) + ' %');
 
     if (metadata.currentFile) {
