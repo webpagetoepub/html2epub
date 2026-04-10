@@ -1,4 +1,11 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+
 const path = require('path');
+const ESLintPlugin = require('eslint-webpack-plugin');
+
+const eslintOptions = {
+  extensions: ['js', 'ts', 'mjs'],
+};
 
 module.exports = {
   mode: 'production',
@@ -14,6 +21,9 @@ module.exports = {
       'fs': false,
     },
   },
+  plugins: [
+    new ESLintPlugin(eslintOptions),
+  ],
   module: {
     rules: [
       {

@@ -5,6 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "tsc-watch --project . --outDir ./dist --onSuccess 'npm run build'",
+    "lint": "eslint src *.mjs *.js",
     "build": "webpack"
   },
   "repository": {
@@ -20,6 +21,8 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.2.0",
+    "eslint-webpack-plugin": "^6.0.0",
+    "globals": "^17.4.0",
     "path-browserify": "^1.0.1",
     "ts-loader": "^9.4.2",
     "tsc-watch": "^6.0.0",
