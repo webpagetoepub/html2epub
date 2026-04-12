@@ -1,4 +1,4 @@
-import { Step } from '../step';
+import { Step } from './step';
 
 const DESCRIPTION = 'Retrieving metadata from HTML document';
 

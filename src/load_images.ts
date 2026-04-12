@@ -1,9 +1,9 @@
 import md5 from 'crypto-js/md5';
 
-import { Step } from '../step';
+import { Step } from './step';
 import { isEmptySvg } from './clean_document/remove_empty_svg';
 
-import NO_IMAGE_DATA_URL from '../../img/no-image.png';
+import NO_IMAGE_DATA_URL from '../img/no-image.png';
 
 const DESCRIPTION = 'Loading images';
 const parser = new DOMParser();

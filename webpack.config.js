@@ -9,7 +9,7 @@ const eslintOptions = {
 
 module.exports = {
   mode: 'production',
-  entry: './src/main.ts',
+  entry: './src/index.ts',
   output: {
     path: path.resolve(__dirname, './js'),
     filename: 'main.js',

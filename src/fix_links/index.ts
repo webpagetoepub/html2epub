@@ -1,7 +1,7 @@
 import fixUrlLinks from './fix_url_links';
 import setExternalLinksBlank from './set_external_links_blank';
 import removeBrokenAnchorLinks from './remove_broken_anchor_links';
-import { Step, Process } from '../../step';
+import { Step, Process } from '../step';
 import { SplittedElement } from '../split_main_content';
 
 const DESCRIPTION = 'Fix links';

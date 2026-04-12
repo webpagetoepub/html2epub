@@ -1,6 +1,6 @@
 import jEpub from 'jepub';
 
-import { Step } from '../step';
+import { Step } from './step';
 
 const DESCRIPTION = 'Creating EPUB file';
 

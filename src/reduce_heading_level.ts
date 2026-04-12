@@ -1,4 +1,4 @@
-import { Step } from '../step';
+import { Step } from './step';
 import replaceElementWithStructure from './replace_element';
 
 const DESCRIPTION = 'Reducing the heading level';

@@ -8,7 +8,7 @@ import convertNoscriptToDiv from './convert_noscript_div';
 import loadImagesStepFactory from './load_images';
 import createEPUB from './create_epub';
 import fixLinks from './fix_links';
-import { Step, Process } from '../step';
+import { Step, Process } from './step';
 
 
 export default async function convertDocumentToEPub(

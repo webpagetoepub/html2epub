@@ -1,4 +1,4 @@
-import { Step } from '../step';
+import { Step } from './step';
 
 const DESCRIPTION = 'Splitting the main content from HTML document by headings';
 const REMAINING_TEXT_LIMIT = 80;

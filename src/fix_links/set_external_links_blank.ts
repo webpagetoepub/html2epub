@@ -1,4 +1,4 @@
-import { Step } from '../../step';
+import { Step } from '../step';
 
 const DESCRIPTION = 'Set external links to open in a new tab';
 
