@@ -1,0 +1,51 @@
+import jEpub from 'jepub';
+
+import { Step } from './step';
+
+const DESCRIPTION = 'Creating EPUB file';
+
+
+export interface SplittedContent {
+  title: string;
+  content: string;
+}
+
+export interface Metadata {
+  title: string;
+  date: Date;
+  author: string;
+  publisher: string;
+  uuid: string;
+  description: string;
+  tags: string[];
+}
+
+async function createEPUB(
+  contents: SplittedContent[],
+  metadata: Metadata,
+  images: {id: string, blob: Blob}[],
+): Promise<{title: string, epub: Blob}> {
+  const jepub = new jEpub();
+
+  jepub.init({ i18n: 'en', ...metadata });
+  jepub.uuid(metadata.uuid);
+  jepub.date(metadata.date);
+
+  images.forEach(image => jepub.image(image.blob, image.id));
+
+  for (const content of contents) {
+    jepub.add(content.title, content.content);
+  }
+
+  const epub = await jepub.generate('blob', (metadata: { percent: number, currentFile: string }) => {
+    console.log('progression: ' + metadata.percent.toFixed(2) + ' %');
+
+    if (metadata.currentFile) {
+      console.log('current file = ' + metadata.currentFile);
+    }
+  }) as Blob;
+
+  return {title: metadata.title, epub};
+}
+
+export default new Step(DESCRIPTION, createEPUB);
