@@ -13,13 +13,13 @@ import { Step, Process } from './step';
 
 export default async function convertDocumentToEPub(
   url: string,
-  htmlContent: string,
+  htmlContent: Promise<string>,
   loadImageFrom: (url: string) => Promise<Blob>,
   callbackStep: (currentStep: number) => void,
   callbackLength: (length: number) => void,
 ) {
   const urlStep = new Step(null, () => url);
-  const htmlContentStep = new Step(null, () => htmlContent);
+  const htmlContentStep = new Step(`Loading "${url}"`, () => htmlContent);
   const convertSplitedContentInHTMLContentStep = new Step(
     null,
     convertSplitedContentInHTMLContent,
