@@ -6,7 +6,6 @@
   "module": "src/index.ts",
   "scripts": {
     "test": "tsx --require ./test/setup.ts --test ./test/**/*.test.ts",
-    "start": "tsc-watch --project . --outDir ./dist --onSuccess 'npm run build'",
     "lint": "eslint src *.mjs *.js",
     "build": "webpack"
   },
@@ -30,7 +29,6 @@
     "jsdom": "^29.0.2",
     "path-browserify": "^1.0.1",
     "ts-loader": "^9.4.2",
-    "tsc-watch": "^6.0.0",
     "tsx": "^4.21.0",
     "typescript": "^4.9.4",
     "typescript-eslint": "^8.58.0",
