@@ -1,6 +1,6 @@
 import { Step } from '../step';
 
-const DESCRIPTION = 'Fix links';
+const DESCRIPTION = 'Replace URL links';
 
 function fixLinks(splitedContents: Element[], originUrl: string) {
   const linksElements = splitedContents.flatMap(splitedContent => Array.from(splitedContent.querySelectorAll('a[href]')));

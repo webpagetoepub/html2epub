@@ -1,4 +1,4 @@
-import fixUrlLinks from './fix_url_links';
+import replaceUrlLinks from './replace_url_links';
 import setExternalLinksBlank from './set_external_links_blank';
 import removeBrokenAnchorLinks from './remove_broken_anchor_links';
 import { Step, Process } from '../step';
@@ -15,9 +15,9 @@ async function fixLinks(splitedContents: SplittedElement[], originUrl: string) {
 
   fixLinksProcess.addStep(splitedContentsStep);
   fixLinksProcess.addStep(originUrlStep);
-  fixLinksProcess.addStep(fixUrlLinks, [splitedContentsStep, originUrlStep]);
-  fixLinksProcess.addStep(setExternalLinksBlank, [fixUrlLinks]);
-  fixLinksProcess.addStep(removeBrokenAnchorLinks, [fixUrlLinks]);
+  fixLinksProcess.addStep(replaceUrlLinks, [splitedContentsStep, originUrlStep]);
+  fixLinksProcess.addStep(setExternalLinksBlank, [replaceUrlLinks]);
+  fixLinksProcess.addStep(removeBrokenAnchorLinks, [replaceUrlLinks]);
 
   await fixLinksProcess.process(() => {}, () => {});
 }
