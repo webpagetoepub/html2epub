@@ -6,20 +6,19 @@
   "module": "src/index.ts",
   "scripts": {
     "test": "tsx --require ./test/setup.ts --test ./test/**/*.test.ts",
-    "start": "tsc-watch --project . --outDir ./dist --onSuccess 'npm run build'",
     "lint": "eslint src *.mjs *.js",
     "build": "webpack"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/carlsonsantana/html2epub.git"
+    "url": "git+https://github.com/webpagetoepub/html2epub.git"
   },
   "author": "Carlson Santana Cruz",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/carlsonsantana/html2epub/issues"
+    "url": "https://github.com/webpagetoepub/html2epub/issues"
   },
-  "homepage": "https://github.com/carlsonsantana/html2epub#readme",
+  "homepage": "https://github.com/webpagetoepub/html2epub#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/jsdom": "^28.0.1",
@@ -30,7 +29,6 @@
     "jsdom": "^29.0.2",
     "path-browserify": "^1.0.1",
     "ts-loader": "^9.4.2",
-    "tsc-watch": "^6.0.0",
     "tsx": "^4.21.0",
     "typescript": "^4.9.4",
     "typescript-eslint": "^8.58.0",
@@ -39,7 +37,6 @@
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
-    "crypto-js": "^4.1.1",
-    "jepub": "^2.5.0"
+    "jepub": "github:webpagetoepub/jEpub#4b7d8a5f6859864c749107009a71ffaa11c8e907"
   }
 }

@@ -1,5 +1,3 @@
-import md5 from 'crypto-js/md5';
-
 import { Step } from './step';
 import { isEmptySvg } from './clean_document/remove_empty_svg';
 
@@ -74,7 +72,7 @@ export default function loadImagesStepFactory(loadImageFrom: (url: string) => Pr
           }
         }
 
-        const id = md5(srcURL);
+        const id = generateHash(srcURL);
 
         return {id, blob};
       }).catch(_ => {
@@ -90,4 +88,17 @@ export default function loadImagesStepFactory(loadImageFrom: (url: string) => Pr
   }
 
   return new Step(DESCRIPTION, loadImages);
+}
+
+function generateHash(str: string) {
+  let hash = 0;
+
+  if (str.length === 0) return 'w' + hash.toString(36);
+
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+  }
+
+  return 'w' + (hash >>> 0).toString(36);
 }
