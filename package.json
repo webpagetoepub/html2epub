@@ -37,6 +37,6 @@
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
-    "jepub": "^2.5.0"
+    "jepub": "github:webpagetoepub/jEpub#4b7d8a5f6859864c749107009a71ffaa11c8e907"
   }
 }
