@@ -1,4 +1,4 @@
-import { Step } from './step';
+import { Step } from '../step';
 
 const DESCRIPTION = 'Replacing unknown HTML elements with div';
 
@@ -36,8 +36,8 @@ const HTML5_ELEMENTS = new Set([
   'details', 'dialog', 'summary',
 ]);
 
-function replaceUnknownElements(mainElement: Element) {
-  const elements = Array.from(mainElement.querySelectorAll('*'));
+function replaceUnknownElements(htmlDoc: HTMLDocument) {
+  const elements = Array.from(htmlDoc.querySelectorAll('body *'));
 
   for (const element of elements) {
     if (!HTML5_ELEMENTS.has(element.tagName.toLowerCase())) {

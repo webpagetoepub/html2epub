@@ -1,11 +1,11 @@
-import { Step } from './step';
-import replaceElementWithStructure from './replace_element';
+import { Step } from '../step';
+import replaceElementWithStructure from '../replace_element';
 
 
 const DESCRIPTION = 'Converting noscript tags to div';
 
-function convertNoscriptToDiv(mainElement: Element) {
-  const noscripts = Array.from(mainElement.querySelectorAll('noscript'));
+function convertNoscriptToDiv(htmlDoc: HTMLDocument) {
+  const noscripts = Array.from(htmlDoc.querySelectorAll('noscript'));
   noscripts.forEach(replaceElementByDiv);
 }
 

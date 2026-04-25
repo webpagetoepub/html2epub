@@ -1,14 +1,12 @@
 import convertTextToDOM from './convert_text_dom';
 import getMetadata from './get_metadata';
 import cleanDocument from './clean_document';
-import reduceHeadingLevelPage from './reduce_heading_level';
+import replaceElements from './replace_elements';
 import getMainContent from './get_main_content';
 import splitContentByHeadings, { SplittedElement } from './split_main_content';
-import convertNoscriptToDiv from './convert_noscript_div';
 import loadImagesStepFactory from './load_images';
 import createEPUB from './create_epub';
 import fixLinks from './fix_links';
-import replaceUnknownElements from './replace_unknown_elements';
 import { Step, Process } from './step';
 
 
@@ -33,10 +31,8 @@ export default async function convertDocumentToEPub(
   convertDocumentProcess.addStep(convertTextToDOM, [htmlContentStep]);
   convertDocumentProcess.addStep(getMetadata, [convertTextToDOM, urlStep]);
   convertDocumentProcess.addStep(cleanDocument, [convertTextToDOM]);
-  convertDocumentProcess.addStep(reduceHeadingLevelPage, [convertTextToDOM]);
+  convertDocumentProcess.addStep(replaceElements, [convertTextToDOM]);
   convertDocumentProcess.addStep(getMainContent, [convertTextToDOM]);
-  convertDocumentProcess.addStep(convertNoscriptToDiv, [getMainContent]);
-  convertDocumentProcess.addStep(replaceUnknownElements, [getMainContent]);
   convertDocumentProcess.addStep(loadImages, [getMainContent, urlStep]);
   convertDocumentProcess.addStep(
     splitContentByHeadings,
