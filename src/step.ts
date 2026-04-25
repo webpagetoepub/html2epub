@@ -3,7 +3,7 @@
 const TEMPLATE_ERROR_MESSAGE = '[ERROR] Error on "%s"';
 
 export class Step {
-  private name: string;
+  name: string;
   private executeFunction: (...params: any[]) => any;
 
   constructor(name: string, executeFunction: (...params: any[]) => any) {
@@ -49,7 +49,8 @@ export class Process {
       }
 
       if (!found) {
-        throw new Error('Failed to create execution dependency.');
+        const dependenciesNames = dependencies.map(dependency => dependency.name);
+        throw new Error(`Failed to create execution dependency. Step "${step.name}" depends on: ${dependenciesNames}.`);
       }
     }
 

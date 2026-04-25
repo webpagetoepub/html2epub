@@ -14,7 +14,7 @@ const DESCRIPTION = 'Cleaning HTML document';
 
 
 async function cleanDocument(htmlDoc: HTMLDocument) {
-  const firstStep = new Step(null, () => htmlDoc);
+  const firstStep = new Step('HTML document step', () => htmlDoc);
 
   const cleanDocumentProcess = new Process();
 

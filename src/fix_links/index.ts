@@ -9,7 +9,7 @@ const DESCRIPTION = 'Fix links';
 
 async function fixLinks(splitedContents: SplittedElement[], originUrl: string) {
   const splitedContentsStep = new Step(null, () => splitedContents.map(splitedContent => splitedContent.element));
-  const originUrlStep = new Step(null, () => originUrl);
+  const originUrlStep = new Step('Origin URL step', () => originUrl);
 
   const fixLinksProcess = new Process();
 

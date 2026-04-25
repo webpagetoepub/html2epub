@@ -17,7 +17,7 @@ export default async function convertDocumentToEPub(
   callbackStep: (currentStep: number) => void,
   callbackLength: (length: number) => void,
 ) {
-  const urlStep = new Step(null, () => url);
+  const urlStep = new Step('URL recover step', () => url);
   const htmlContentStep = new Step(`Loading "${url}"`, () => htmlContent);
   const convertSplitedContentInHTMLContentStep = new Step(
     null,
