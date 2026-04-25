@@ -8,6 +8,7 @@ import convertNoscriptToDiv from './convert_noscript_div';
 import loadImagesStepFactory from './load_images';
 import createEPUB from './create_epub';
 import fixLinks from './fix_links';
+import replaceUnknownElements from './replace_unknown_elements';
 import { Step, Process } from './step';
 
 
@@ -35,6 +36,7 @@ export default async function convertDocumentToEPub(
   convertDocumentProcess.addStep(reduceHeadingLevelPage, [convertTextToDOM]);
   convertDocumentProcess.addStep(getMainContent, [convertTextToDOM]);
   convertDocumentProcess.addStep(convertNoscriptToDiv, [getMainContent]);
+  convertDocumentProcess.addStep(replaceUnknownElements, [getMainContent]);
   convertDocumentProcess.addStep(loadImages, [getMainContent, urlStep]);
   convertDocumentProcess.addStep(
     splitContentByHeadings,
