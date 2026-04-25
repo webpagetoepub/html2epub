@@ -4,7 +4,8 @@
     "noImplicitAny": true,
     "outDir": "./dist/",
     "allowJs": true,
-    "checkJs": false
+    "checkJs": false,
+    "strict": true
   },
   "include": ["./src/*"],
   "exclude": ["node_modules"]
