@@ -6,7 +6,8 @@
   "module": "src/index.ts",
   "scripts": {
     "test": "tsx --require ./test/setup.ts --test ./test/**/*.test.ts",
-    "lint": "eslint src *.mjs"
+    "lint": "eslint src *.mjs",
+    "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "repository": {
     "type": "git",
@@ -26,7 +27,7 @@
     "globals": "^17.4.0",
     "jsdom": "^29.0.2",
     "tsx": "^4.21.0",
-    "typescript": "^4.9.4",
+    "typescript": "^6.0.3",
     "typescript-eslint": "^8.58.0"
   },
   "dependencies": {

@@ -20,7 +20,7 @@ export default async function convertDocumentToEPub(
   const urlStep = new Step('URL recover step', () => url);
   const htmlContentStep = new Step(`Loading "${url}"`, () => htmlContent);
   const convertSplitedContentInHTMLContentStep = new Step(
-    null,
+    'Convert splited content in HTML content',
     convertSplitedContentInHTMLContent,
   );
   const loadImages = loadImagesStepFactory(loadImageFrom);

@@ -67,10 +67,10 @@ function recursiveSplitContent(
   newParentElement: Element,
 ): string {
   const cloneAncestors = [ ...ancestors ];
-  const element = cloneAncestors.pop();
+  const element = cloneAncestors.pop()!;
   const currentParentElement = element.parentNode as Element;
 
-  let title;
+  let title = '';
   if (cloneAncestors.length > 0) {
     const newElement = cloneElementOnly(element);
     title = recursiveSplitContent(cloneAncestors, newElement);

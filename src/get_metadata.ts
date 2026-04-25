@@ -35,7 +35,7 @@ function getDate(htmlDoc: HTMLDocument) {
   );
   if (datePublishedStructuredMetadata) {
     try {
-      return new Date(datePublishedStructuredMetadata.getAttribute('content'));
+      return new Date(datePublishedStructuredMetadata.getAttribute('content')!);
     } catch (_) {
       // continue regardless of error
     }
@@ -46,7 +46,7 @@ function getDate(htmlDoc: HTMLDocument) {
   );
   if (startDate) {
     try {
-      return new Date(startDate.getAttribute('datetime'));
+      return new Date(startDate.getAttribute('datetime')!);
     } catch (_) {
       // continue regardless of error
     }
@@ -134,7 +134,7 @@ function getContentFromMetatags(
     const metaElement = htmlDoc.querySelector(`meta[name="${name}"][content]`);
 
     if (metaElement) {
-      const content = metaElement.getAttribute('content').trim();
+      const content = metaElement.getAttribute('content')!.trim();
 
       if (content) {
         return content;

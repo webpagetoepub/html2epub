@@ -18,7 +18,7 @@ export default function loadImagesStepFactory(loadImageFrom: (url: string) => Pr
     const replaceImageSrcByAbsoluteSrc = replaceImageSrcByPageURLAbsoluteSrc(url);
 
     const images = getAllImages(mainElement)
-        .filter(image => !image.getAttribute('src').startsWith('data:'));
+        .filter(image => !image.getAttribute('src')!.startsWith('data:'));
     images.forEach(replaceImageSrcByAbsoluteSrc);
     const promises = images.map(image => loadImage(image).then(loadedImage => {
       replaceImageByID(image, loadedImage);
@@ -34,12 +34,12 @@ export default function loadImagesStepFactory(loadImageFrom: (url: string) => Pr
   function getAllImages(mainElement: Element) {
     return Array.from(
       mainElement.querySelectorAll('img[src]')
-    ).filter(element => element.getAttribute('src').trim());
+    ).filter(element => element.getAttribute('src')!.trim());
   }
 
   function replaceImageSrcByPageURLAbsoluteSrc(pageURL: string) {
     return (image: Element) => {
-      const srcURL = image.getAttribute('src').trim();
+      const srcURL = image.getAttribute('src')!.trim();
       const srcAbsoluteURL = new URL(srcURL, pageURL).toString();
       image.setAttribute('src', srcAbsoluteURL);
     };
@@ -47,14 +47,14 @@ export default function loadImagesStepFactory(loadImageFrom: (url: string) => Pr
 
   function replaceImageByID(image: Element, loadedImage: LoadedImage) {
     const comment = document.createComment(`<%= image['${loadedImage.id}'] %>`);
-    image.parentNode.replaceChild(comment, image)
+    image.parentNode!.replaceChild(comment, image)
   }
 
   function memoizedLoadImage() {
     const cache: {[src: string]: Promise<LoadedImage>} = {};
 
     return (image: Element) => {
-      const srcURL = image.getAttribute('src');
+      const srcURL = image.getAttribute('src')!;
       if (srcURL in cache) {
         return cache[srcURL];
       }

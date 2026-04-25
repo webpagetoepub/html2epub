@@ -6,7 +6,7 @@ function fixLinks(splitedContents: Element[], originUrl: string) {
   const linksElements = splitedContents.flatMap(splitedContent => Array.from(splitedContent.querySelectorAll('a[href]')));
 
   for (const linkElement of linksElements) {
-    let newUrl = linkElement.getAttribute('href');
+    let newUrl = linkElement.getAttribute('href')!;
     newUrl = convertUrlToAbsolute(newUrl, originUrl);
     newUrl = retrieveAnchorIfLocalUrl(newUrl, originUrl);
 

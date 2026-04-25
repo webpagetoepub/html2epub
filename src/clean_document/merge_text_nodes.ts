@@ -17,7 +17,7 @@ function mergeTextNodesElement(element: Element) {
 
     if (lastNodeIsTextNode && currentNodeIsTextNode) {
       const lastNode = childNodesList[i + 1];
-      currentNode.nodeValue += lastNode.nodeValue;
+      currentNode.nodeValue! += lastNode.nodeValue!;
 
       lastNode.remove();
     }

@@ -27,7 +27,7 @@ function removeExtraWhitespaces(textNode: Text) {
       return;
     }
 
-    textNode.nodeValue = textNode.nodeValue.replace(/\r/g, '')
+    textNode.nodeValue = textNode.nodeValue!.replace(/\r/g, '')
                                            .replace(/\t/g, ' ')
                                            .replace(/  +/g, ' ')
                                            .replace(/\n[\n ]+/g, '\n')
@@ -35,7 +35,7 @@ function removeExtraWhitespaces(textNode: Text) {
 }
 
 function canRemoveWhitespaces(textNode: Text) {
-    const parentTagName = textNode.parentElement.tagName;
+    const parentTagName = textNode.parentElement!.tagName;
 
     return ['PRE', 'CODE'].indexOf(parentTagName) == -1;
 }
