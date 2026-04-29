@@ -3,17 +3,19 @@ import { Step } from '../step';
 const DESCRIPTION = 'Removing unused HTML elements';
 
 const EMBEDDED_ELEMENTS_TO_REMOVE = [
-  'map', 'embed', 'object', 'video', 'audio', 'iframe', 'canvas', 'applet',
-  'frameset', 'track', 'portal', 'source', 'frame', 'param', 'shadow',
+  'map', 'area', 'embed', 'object', 'video', 'audio', 'iframe', 'canvas',
+  'applet', 'frameset', 'track', 'portal', 'source', 'frame', 'param', 'shadow',
 ];
 const FORM_ELEMENTS_TO_REMOVE = [
   'button', 'input', 'textarea', 'select', 'output', 'datalist', 'keygen',
+  'optgroup', 'option',
 ];
 const METADATA_SCRIPT_ELEMENTS_TO_REMOVE = [
   'base', 'script', 'meta', 'link', 'style', 'template', 'slot',
+  'basefont', 'font',
 ];
 const INTERACTIVE_ELEMENTS_TO_REMOVE = ['menu', 'command', 'nav', 'menuitem'];
-const NOT_SUPPORTED_ELEMENTS_TO_REMOVE = ['svg'];
+const NOT_SUPPORTED_ELEMENTS_TO_REMOVE = ['math', 'svg', 'col', 'colgroup', 'dialog'];
 
 const ELEMENTS_TO_REMOVE = [
   ...EMBEDDED_ELEMENTS_TO_REMOVE,
