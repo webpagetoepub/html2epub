@@ -5,8 +5,8 @@ const DESCRIPTION = 'Replacing unknown HTML elements with div';
 const HTML5_ELEMENTS = new Set([
   // Content sectioning
   'address', 'article', 'aside', 'footer', 'header',
-  'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-  'main', 'nav', 'section',
+  'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hgroup',
+  'main', 'section',
   // Text content
   'blockquote', 'dd', 'div', 'dl', 'dt', 'figcaption', 'figure',
   'hr', 'li', 'ol', 'p', 'pre', 'ul',
@@ -16,24 +16,21 @@ const HTML5_ELEMENTS = new Set([
   's', 'samp', 'small', 'span', 'strong', 'sub', 'sup',
   'time', 'u', 'var', 'wbr',
   // Image and multimedia
-  'area', 'audio', 'img', 'map', 'track', 'video',
+  'img',
   // Embedded content
-  'embed', 'iframe', 'object', 'picture', 'portal', 'source',
-  // SVG and MathML
-  'math', 'svg',
+  'picture', 'portal',
   // Scripting
-  'canvas', 'noscript', 'script',
+  'noscript',
   // Demarcating edits
   'del', 'ins',
   // Table content
-  'caption', 'col', 'colgroup', 'table', 'tbody', 'td',
+  'caption', 'table', 'tbody', 'td',
   'tfoot', 'th', 'thead', 'tr',
   // Forms
-  'button', 'datalist', 'fieldset', 'form', 'input', 'label',
-  'legend', 'meter', 'optgroup', 'option', 'output', 'progress',
-  'select', 'textarea',
+  'fieldset', 'form', 'label',
+  'legend', 'meter', 'progress',
   // Interactive elements
-  'details', 'dialog', 'summary',
+  'details', 'summary',
 ]);
 
 function replaceUnknownElements(htmlDoc: HTMLDocument) {
