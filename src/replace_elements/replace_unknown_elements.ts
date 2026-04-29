@@ -2,7 +2,7 @@ import { Step } from '../step';
 
 const DESCRIPTION = 'Replacing unknown HTML elements with div';
 
-const HTML5_ELEMENTS = new Set([
+const HTML5_TAGS = new Set([
   // Content sectioning
   'address', 'article', 'aside', 'footer', 'header',
   'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hgroup',
@@ -37,7 +37,7 @@ function replaceUnknownElements(htmlDoc: HTMLDocument) {
   const elements = Array.from(htmlDoc.querySelectorAll('body *'));
 
   for (const element of elements) {
-    if (!HTML5_ELEMENTS.has(element.tagName.toLowerCase())) {
+    if (!HTML5_TAGS.has(element.tagName.toLowerCase())) {
       const div = document.createElement('div');
       while (element.firstChild) {
         div.appendChild(element.firstChild);
