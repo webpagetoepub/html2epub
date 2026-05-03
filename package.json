@@ -31,6 +31,6 @@
     "typescript-eslint": "^8.58.0"
   },
   "dependencies": {
-    "jepub": "github:webpagetoepub/jEpub#415359fd0d0a37db5c92b318f3df31835ccdbafe"
+    "jepub": "github:webpagetoepub/jEpub#fd264d5acadd693ebfffde26a5d879cdf7c2dcfb"
   }
 }

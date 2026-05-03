@@ -21,7 +21,7 @@ export default function loadImagesStepFactory(loadImageFrom: (url: string) => Pr
         .filter(image => !image.getAttribute('src')!.startsWith('data:'));
     images.forEach(replaceImageSrcByAbsoluteSrc);
     const promises = images.map(image => loadImage(image).then(loadedImage => {
-      replaceImageByID(image, loadedImage);
+      replaceImageURL(image, loadedImage);
 
       return loadedImage;
     }));
@@ -45,9 +45,8 @@ export default function loadImagesStepFactory(loadImageFrom: (url: string) => Pr
     };
   }
 
-  function replaceImageByID(image: Element, loadedImage: LoadedImage) {
-    const comment = document.createComment(`<%= image['${loadedImage.id}'] %>`);
-    image.parentNode!.replaceChild(comment, image)
+  function replaceImageURL(image: Element, loadedImage: LoadedImage) {
+    image.setAttribute('src', `<%= image_path['${loadedImage.id}'] %>`);
   }
 
   function memoizedLoadImage() {

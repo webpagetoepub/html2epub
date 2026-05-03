@@ -45,7 +45,7 @@ const INTERATIVE_ATTRIBUTES_TO_REMOVE = [
   'autofocus',
 ];
 
-const STYLE_BREAK = ['background', 'bgcolor', 'border'];
+const STYLE_BREAK = ['background', 'bgcolor', 'border', 'width', 'heigth'];
 
 const FORM_SUBMISSION = [
   'accept', 'accept-charset', 'action', 'enctype', 'method',
