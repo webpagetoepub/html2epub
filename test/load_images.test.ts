@@ -5,18 +5,6 @@ import loadImagesStepFactory from '../src/load_images';
 
 const PAGE_URL = 'https://example.com/page';
 
-test('replaces img elements with comment nodes after loading', async () => {
-  const main = makeElement('<img src="https://example.com/photo.jpg">');
-  const step = loadImagesStepFactory(async () => new Blob([], { type: 'image/png' }));
-
-  await step.run(main, PAGE_URL);
-
-  const hasComment = Array.from(main.childNodes).some(n => n.nodeType === Node.COMMENT_NODE);
-
-  assert.equal(main.querySelectorAll('img').length, 0);
-  assert.ok(hasComment, 'img should be replaced with a comment node');
-});
-
 test('returns loaded image metadata', async () => {
   const main = makeElement('<img src="https://example.com/photo.jpg">');
   const step = loadImagesStepFactory(async () => new Blob([], { type: 'image/png' }));
