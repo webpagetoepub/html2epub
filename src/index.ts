@@ -40,7 +40,9 @@ export default async function convertDocumentToEPub(
     {step: createEPUB, dependencies: [convertSplitedContentInHTMLContentStep, getMetadata, loadImages]},
   ]);
 
-  return await convertDocumentProcess.process(callbackStep, callbackLength);
+  callbackLength(convertDocumentProcess.getLength());
+
+  return await convertDocumentProcess.process(callbackStep);
 }
 
 function convertSplitedContentInHTMLContent(
