@@ -1,4 +1,4 @@
-import { Step, Process } from '../step';
+import { Step, SubProcessStep, Process } from '../step';
 import reduceHeadingLevelPage from './reduce_heading_level';
 import replaceUnknownElements from './replace_unknown_elements';
 import replaceSimpleElementsTag from './replace_simple_elements_tag';
@@ -6,7 +6,7 @@ import replaceSimpleElementsTag from './replace_simple_elements_tag';
 const DESCRIPTION = 'Replace HTML elements';
 
 
-async function replaceElements(htmlDoc: HTMLDocument) {
+function buildReplaceElementsProcess(htmlDoc: HTMLDocument): Process {
   const htmlDocStep = new Step('HTML document step', () => htmlDoc);
 
   const replaceElementsProcess = new Process();
@@ -15,7 +15,7 @@ async function replaceElements(htmlDoc: HTMLDocument) {
   replaceElementsProcess.addStep(replaceSimpleElementsTag, [htmlDocStep]);
   replaceElementsProcess.addStep(replaceUnknownElements, [htmlDocStep]);
 
-  await replaceElementsProcess.process(() => {}, () => {});
+  return replaceElementsProcess;
 }
 
-export default new Step(DESCRIPTION, replaceElements);
+export default new SubProcessStep(DESCRIPTION, buildReplaceElementsProcess);

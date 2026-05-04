@@ -3,8 +3,8 @@
 const TEMPLATE_ERROR_MESSAGE = '[ERROR] Error on "%s"';
 
 export class Step {
-  name: string;
-  private executeFunction: (...params: any[]) => any;
+  readonly name: string;
+  private readonly executeFunction: (...params: any[]) => any;
 
   constructor(name: string, executeFunction: (...params: any[]) => any) {
     this.name = name;
@@ -25,6 +25,38 @@ export class Step {
       throw error;
     }
   }
+
+  getStepCount() {
+    return 1;
+  }
+}
+
+export class SubProcessStep extends Step {
+  private readonly processFactory: (...params: any[]) => Process;
+
+  constructor(name: string, processFactory: (...params: any[]) => Process) {
+    super(name, () => {});
+    this.processFactory = processFactory;
+  }
+
+  run(callbackStep: (currentStep: number) => void, ...params: any[]) {
+    if (this.name) {
+      console.log(this.name);
+    }
+
+    try {
+      return this.processFactory(...params).process(callbackStep, () => {});
+    } catch (error) {
+      const message = TEMPLATE_ERROR_MESSAGE.replace('%s', this.name);
+      console.error(message);
+
+      throw error;
+    }
+  }
+
+  getStepCount() {
+    return this.processFactory().getLength();
+  }
 }
 
 export class Process {
@@ -32,6 +64,10 @@ export class Process {
 
   constructor() {
     this.stepsFlow = [];
+  }
+
+  getLength(): number {
+    return this.stepsFlow.reduce((sum, { step }) => sum + step.getStepCount(), 0);
   }
 
   addStep(step: Step, dependencies: Step[] = []) {
@@ -58,21 +94,24 @@ export class Process {
   }
 
   async process(callbackStep: (currentStep: number) => void, callbackLength: (length: number) => void) {
-    const length = this.stepsFlow.length;
-    const results = [];
-    let result = null;
+    const length = this.getLength();
+    const results: any[] = [];
+    let result: any = null;
+    let offset = 0;
 
     callbackLength(length);
-    for (let i = 0; i < length; i++) {
-      const stepWithDependencies = this.stepsFlow[i];
-      const params: any[] = [];
+    for (const { step, dependenciesIndex } of this.stepsFlow) {
+      const params: any[] = dependenciesIndex.map(idx => results[idx]);
 
-      for (const dependencyIndex of stepWithDependencies.dependenciesIndex) {
-        params.push(results[dependencyIndex]);
+      if (step instanceof SubProcessStep) {
+        const capturedOffset = offset;
+        result = step.run(
+          (subStep) => callbackStep(capturedOffset + subStep),
+          ...params,
+        );
+      } else {
+        result = step.run(...params);
       }
-
-      const step = stepWithDependencies.step;
-      result = step.run(...params);
 
       if (result instanceof Promise) {
         results.push(await result);
@@ -80,7 +119,11 @@ export class Process {
         results.push(result);
       }
 
-      callbackStep(i + 1);
+      offset += step.getStepCount();
+
+      if (!(step instanceof SubProcessStep)) {
+        callbackStep(offset);
+      }
     }
 
     return result;

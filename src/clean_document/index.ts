@@ -8,12 +8,12 @@ import mergeTextNodes from './merge_text_nodes';
 import removeExtraWhitespacesFromDocument from './remove_whitespaces';
 import removeEmptySVGs from './remove_empty_svg';
 import removeEmptyHeadings from './remove_empty_headings';
-import { Step, Process } from '../step';
+import { Step, SubProcessStep, Process } from '../step';
 
 const DESCRIPTION = 'Cleaning HTML document';
 
 
-async function cleanDocument(htmlDoc: HTMLDocument) {
+function buildCleanDocumentProcess(htmlDoc: HTMLDocument): Process {
   const firstStep = new Step('HTML document step', () => htmlDoc);
 
   const cleanDocumentProcess = new Process();
@@ -30,7 +30,7 @@ async function cleanDocument(htmlDoc: HTMLDocument) {
   cleanDocumentProcess.addStep(removeEmptySVGs, [firstStep]);
   cleanDocumentProcess.addStep(removeEmptyHeadings, [firstStep]);
 
-  await cleanDocumentProcess.process(() => {}, () => {});
+  return cleanDocumentProcess;
 }
 
-export default new Step(DESCRIPTION, cleanDocument);
+export default new SubProcessStep(DESCRIPTION, buildCleanDocumentProcess);
