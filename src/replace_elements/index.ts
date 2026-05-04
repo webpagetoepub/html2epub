@@ -9,13 +9,12 @@ const DESCRIPTION = 'Replace HTML elements';
 function buildReplaceElementsProcess(htmlDoc: HTMLDocument): Process {
   const htmlDocStep = new Step('HTML document step', () => htmlDoc);
 
-  const replaceElementsProcess = new Process();
-  replaceElementsProcess.addStep(htmlDocStep);
-  replaceElementsProcess.addStep(reduceHeadingLevelPage, [htmlDocStep]);
-  replaceElementsProcess.addStep(replaceSimpleElementsTag, [htmlDocStep]);
-  replaceElementsProcess.addStep(replaceUnknownElements, [htmlDocStep]);
-
-  return replaceElementsProcess;
+  return new Process([
+    {step: htmlDocStep},
+    {step: reduceHeadingLevelPage, dependencies: [htmlDocStep]},
+    {step: replaceSimpleElementsTag, dependencies: [htmlDocStep]},
+    {step: replaceUnknownElements, dependencies: [htmlDocStep]},
+  ]);
 }
 
 export default new SubProcessStep(DESCRIPTION, buildReplaceElementsProcess);

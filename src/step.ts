@@ -62,15 +62,12 @@ export class SubProcessStep extends Step {
 export class Process {
   private stepsFlow: {step: Step, dependenciesIndex: number[]}[];
 
-  constructor() {
+  constructor(steps: {step: Step, dependencies?: Step[]}[]) {
     this.stepsFlow = [];
+    steps.forEach(step => this.addStep(step.step, step.dependencies));
   }
 
-  getLength(): number {
-    return this.stepsFlow.reduce((sum, { step }) => sum + step.getStepCount(), 0);
-  }
-
-  addStep(step: Step, dependencies: Step[] = []) {
+  private addStep(step: Step, dependencies: Step[] = []) {
     const dependenciesIndex: number[] = [];
     for (const dependency of dependencies) {
       let found = false;
@@ -91,6 +88,10 @@ export class Process {
     }
 
     this.stepsFlow.push({ step, dependenciesIndex });
+  }
+
+  getLength(): number {
+    return this.stepsFlow.reduce((sum, { step }) => sum + step.getStepCount(), 0);
   }
 
   async process(callbackStep: (currentStep: number) => void, callbackLength: (length: number) => void) {

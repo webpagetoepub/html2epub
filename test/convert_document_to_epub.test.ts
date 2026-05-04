@@ -32,3 +32,22 @@ test('converts an HTML page to an EPUB without crashing', async () => {
   assert.ok(result, 'result should be defined');
   assert.ok(result.epub instanceof Blob, 'result.epub should be a Blob');
 });
+
+test('reports correct total step count and sequential progress through all sub-steps', async () => {
+  const url = 'https://example.com/article';
+  const loadImageFrom = async (_: string): Promise<Blob> => new Blob([], { type: 'image/png' });
+  const reportedSteps: number[] = [];
+  let reportedLength = 0;
+
+  await convertDocumentToEPub(
+    url,
+    Promise.resolve(HTML),
+    loadImageFrom,
+    (step) => reportedSteps.push(step),
+    (length) => { reportedLength = length; },
+  );
+
+  const expectedSteps = Array.from({ length: 29 }, (_, i) => i + 1);
+  assert.strictEqual(reportedLength, 29);
+  assert.deepStrictEqual(reportedSteps, expectedSteps);
+});

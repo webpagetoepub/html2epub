@@ -14,15 +14,13 @@ function buildFixLinksProcess(splitedContents: SplittedElement[], originUrl: str
   );
   const originUrlStep = new Step('Origin URL step', () => originUrl);
 
-  const fixLinksProcess = new Process();
-
-  fixLinksProcess.addStep(splitedContentsStep);
-  fixLinksProcess.addStep(originUrlStep);
-  fixLinksProcess.addStep(replaceUrlLinks, [splitedContentsStep, originUrlStep]);
-  fixLinksProcess.addStep(setExternalLinksBlank, [replaceUrlLinks]);
-  fixLinksProcess.addStep(removeBrokenAnchorLinks, [replaceUrlLinks]);
-
-  return fixLinksProcess;
+  return new Process([
+    {step: splitedContentsStep},
+    {step: originUrlStep},
+    {step: replaceUrlLinks, dependencies: [splitedContentsStep, originUrlStep]},
+    {step: setExternalLinksBlank, dependencies: [replaceUrlLinks]},
+    {step: removeBrokenAnchorLinks, dependencies: [replaceUrlLinks]},
+  ]);
 }
 
 export default new SubProcessStep(DESCRIPTION, buildFixLinksProcess);

@@ -16,21 +16,19 @@ const DESCRIPTION = 'Cleaning HTML document';
 function buildCleanDocumentProcess(htmlDoc: HTMLDocument): Process {
   const firstStep = new Step('HTML document step', () => htmlDoc);
 
-  const cleanDocumentProcess = new Process();
-
-  cleanDocumentProcess.addStep(firstStep);
-  cleanDocumentProcess.addStep(removeElementsFromDocument, [firstStep]);
-  cleanDocumentProcess.addStep(removeHiddenElements, [firstStep]);
-  cleanDocumentProcess.addStep(removeAllComments, [firstStep]);
-  cleanDocumentProcess.addStep(removeEmptyElements, [firstStep]);
-  cleanDocumentProcess.addStep(removeDataAttributes, [firstStep]);
-  cleanDocumentProcess.addStep(removeAttributes, [firstStep]);
-  cleanDocumentProcess.addStep(mergeTextNodes, [firstStep]);
-  cleanDocumentProcess.addStep(removeExtraWhitespacesFromDocument, [firstStep]);
-  cleanDocumentProcess.addStep(removeEmptySVGs, [firstStep]);
-  cleanDocumentProcess.addStep(removeEmptyHeadings, [firstStep]);
-
-  return cleanDocumentProcess;
+  return new Process([
+    {step: firstStep},
+    {step: removeElementsFromDocument, dependencies: [firstStep]},
+    {step: removeHiddenElements, dependencies: [firstStep]},
+    {step: removeAllComments, dependencies: [firstStep]},
+    {step: removeEmptyElements, dependencies: [firstStep]},
+    {step: removeDataAttributes, dependencies: [firstStep]},
+    {step: removeAttributes, dependencies: [firstStep]},
+    {step: mergeTextNodes, dependencies: [firstStep]},
+    {step: removeExtraWhitespacesFromDocument, dependencies: [firstStep]},
+    {step: removeEmptySVGs, dependencies: [firstStep]},
+    {step: removeEmptyHeadings, dependencies: [firstStep]},
+  ]);
 }
 
 export default new SubProcessStep(DESCRIPTION, buildCleanDocumentProcess);

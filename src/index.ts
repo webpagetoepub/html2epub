@@ -25,28 +25,20 @@ export default async function convertDocumentToEPub(
   );
   const loadImages = loadImagesStepFactory(loadImageFrom);
 
-  const convertDocumentProcess = new Process();
-  convertDocumentProcess.addStep(urlStep);
-  convertDocumentProcess.addStep(htmlContentStep);
-  convertDocumentProcess.addStep(convertTextToDOM, [htmlContentStep]);
-  convertDocumentProcess.addStep(getMetadata, [convertTextToDOM, urlStep]);
-  convertDocumentProcess.addStep(cleanDocument, [convertTextToDOM]);
-  convertDocumentProcess.addStep(replaceElements, [convertTextToDOM]);
-  convertDocumentProcess.addStep(getMainContent, [convertTextToDOM]);
-  convertDocumentProcess.addStep(loadImages, [getMainContent, urlStep]);
-  convertDocumentProcess.addStep(
-    splitContentByHeadings,
-    [getMainContent, getMetadata],
-  );
-  convertDocumentProcess.addStep(fixLinks, [splitContentByHeadings, urlStep]);
-  convertDocumentProcess.addStep(
-    convertSplitedContentInHTMLContentStep,
-    [splitContentByHeadings],
-  );
-  convertDocumentProcess.addStep(
-    createEPUB,
-    [convertSplitedContentInHTMLContentStep, getMetadata, loadImages],
-  );
+  const convertDocumentProcess = new Process([
+    {step: urlStep},
+    {step: htmlContentStep},
+    {step: convertTextToDOM, dependencies: [htmlContentStep]},
+    {step: getMetadata, dependencies: [convertTextToDOM, urlStep]},
+    {step: cleanDocument, dependencies: [convertTextToDOM]},
+    {step: replaceElements, dependencies: [convertTextToDOM]},
+    {step: getMainContent, dependencies: [convertTextToDOM]},
+    {step: loadImages, dependencies: [getMainContent, urlStep]},
+    {step: splitContentByHeadings, dependencies: [getMainContent, getMetadata]},
+    {step: fixLinks, dependencies: [splitContentByHeadings, urlStep]},
+    {step: convertSplitedContentInHTMLContentStep, dependencies: [splitContentByHeadings]},
+    {step: createEPUB, dependencies: [convertSplitedContentInHTMLContentStep, getMetadata, loadImages]},
+  ]);
 
   return await convertDocumentProcess.process(callbackStep, callbackLength);
 }
