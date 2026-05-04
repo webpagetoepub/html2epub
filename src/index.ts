@@ -60,10 +60,5 @@ function getHtmlContent(element: Element) {
   const xhtmlCode = new XMLSerializer().serializeToString(xhtmlElement);
   const xhtmlDocument = new DOMParser().parseFromString(xhtmlCode, 'text/html');
 
-  return replaceCommentsImagesByImages(xhtmlDocument.body.innerHTML);
-}
-
-function replaceCommentsImagesByImages(content: string) {
-  return content.replace(/<!--\s*<%= image\[/g, '<%= image[')
-                .replace(/] %>\s*-->/g, '] %>');
+  return xhtmlDocument.body.innerHTML;
 }
