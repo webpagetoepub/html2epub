@@ -35,23 +35,10 @@ export class SubProcessStep extends Step {
   private readonly processFactory: (...params: any[]) => Process;
 
   constructor(name: string, processFactory: (...params: any[]) => Process) {
-    super(name, () => {});
+    super(name, (callbackStepCompleted: () => void, ...params) => {
+      return processFactory(...params).process(callbackStepCompleted);
+    });
     this.processFactory = processFactory;
-  }
-
-  run(callbackStepCompleted: () => void, ...params: any[]) {
-    if (this.name) {
-      console.log(this.name);
-    }
-
-    try {
-      return this.processFactory(...params).process(callbackStepCompleted);
-    } catch (error) {
-      const message = TEMPLATE_ERROR_MESSAGE.replace('%s', this.name);
-      console.error(message);
-
-      throw error;
-    }
   }
 
   getStepCount() {
