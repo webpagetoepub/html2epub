@@ -38,16 +38,17 @@ test('reports correct total step count and sequential progress through all sub-s
   const loadImageFrom = async (_: string): Promise<Blob> => new Blob([], { type: 'image/png' });
   const reportedSteps: number[] = [];
   let reportedLength = 0;
+  let currentStep = 0;
 
   await convertDocumentToEPub(
     url,
     Promise.resolve(HTML),
     loadImageFrom,
-    (step) => reportedSteps.push(step),
+    () => reportedSteps.push(++currentStep),
     (length) => { reportedLength = length; },
   );
 
-  const expectedSteps = Array.from({ length: 29 }, (_, i) => i + 1);
-  assert.strictEqual(reportedLength, 29);
+  const expectedSteps = Array.from({ length: 32 }, (_, i) => i + 1);
+  assert.strictEqual(reportedLength, 32);
   assert.deepStrictEqual(reportedSteps, expectedSteps);
 });

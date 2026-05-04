@@ -14,7 +14,7 @@ export default async function convertDocumentToEPub(
   url: string,
   htmlContent: Promise<string>,
   loadImageFrom: (url: string) => Promise<Blob>,
-  callbackStep: (currentStep: number) => void,
+  callbackStepCompleted: () => void,
   callbackLength: (length: number) => void,
 ) {
   const urlStep = new Step('URL recover step', () => url);
@@ -42,7 +42,7 @@ export default async function convertDocumentToEPub(
 
   callbackLength(convertDocumentProcess.getLength());
 
-  return await convertDocumentProcess.process(callbackStep);
+  return await convertDocumentProcess.process(callbackStepCompleted);
 }
 
 function convertSplitedContentInHTMLContent(

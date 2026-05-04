@@ -39,13 +39,13 @@ export class SubProcessStep extends Step {
     this.processFactory = processFactory;
   }
 
-  run(callbackStep: (currentStep: number) => void, ...params: any[]) {
+  run(callbackStepCompleted: () => void, ...params: any[]) {
     if (this.name) {
       console.log(this.name);
     }
 
     try {
-      return this.processFactory(...params).process(callbackStep);
+      return this.processFactory(...params).process(callbackStepCompleted);
     } catch (error) {
       const message = TEMPLATE_ERROR_MESSAGE.replace('%s', this.name);
       console.error(message);
@@ -55,7 +55,7 @@ export class SubProcessStep extends Step {
   }
 
   getStepCount() {
-    return this.processFactory().getLength();
+    return this.processFactory().getLength() + 1;
   }
 }
 
@@ -94,20 +94,15 @@ export class Process {
     return this.stepsFlow.reduce((sum, { step }) => sum + step.getStepCount(), 0);
   }
 
-  async process(callbackStep: (currentStep: number) => void) {
+  async process(callbackStepCompleted: () => void) {
     const results: any[] = [];
     let result: any = null;
-    let offset = 0;
 
     for (const { step, dependenciesIndex } of this.stepsFlow) {
       const params: any[] = dependenciesIndex.map(idx => results[idx]);
 
       if (step instanceof SubProcessStep) {
-        const capturedOffset = offset;
-        result = step.run(
-          (subStep) => callbackStep(capturedOffset + subStep),
-          ...params,
-        );
+        result = step.run(callbackStepCompleted, ...params);
       } else {
         result = step.run(...params);
       }
@@ -118,11 +113,7 @@ export class Process {
         results.push(result);
       }
 
-      offset += step.getStepCount();
-
-      if (!(step instanceof SubProcessStep)) {
-        callbackStep(offset);
-      }
+      callbackStepCompleted();
     }
 
     return result;
