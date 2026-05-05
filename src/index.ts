@@ -5,9 +5,10 @@ import replaceElements from './replace_elements';
 import getMainContent from './get_main_content';
 import splitContentByHeadings, { SplittedElement } from './split_main_content';
 import loadImagesStepFactory from './load_images';
-import createEPUB from './create_epub';
+import createEpubStepFactory from './create_epub';
 import fixLinks from './fix_links';
 import { Step, Process } from './step';
+import { Logger } from './logger';
 
 
 export default async function convertDocumentToEPub(
@@ -16,6 +17,7 @@ export default async function convertDocumentToEPub(
   loadImageFrom: (url: string) => Promise<Blob>,
   callbackStepCompleted: () => void,
   callbackLength: (length: number) => void,
+  logger: Logger,
 ) {
   const urlStep = new Step('URL recover step', () => url);
   const htmlContentStep = new Step(`Loading "${url}"`, () => htmlContent);
@@ -24,6 +26,7 @@ export default async function convertDocumentToEPub(
     convertSplitedContentInHTMLContent,
   );
   const loadImages = loadImagesStepFactory(loadImageFrom);
+  const createEPUB = createEpubStepFactory(logger);
 
   const convertDocumentProcess = new Process([
     {step: urlStep},
@@ -42,7 +45,7 @@ export default async function convertDocumentToEPub(
 
   callbackLength(convertDocumentProcess.getLength());
 
-  return await convertDocumentProcess.process(callbackStepCompleted);
+  return await convertDocumentProcess.process(callbackStepCompleted, logger);
 }
 
 function convertSplitedContentInHTMLContent(

@@ -1,6 +1,7 @@
 import jEpub from 'jepub';
 
 import { Step } from './step';
+import { Logger } from './logger';
 
 const DESCRIPTION = 'Creating EPUB file';
 
@@ -21,6 +22,7 @@ export interface Metadata {
 }
 
 async function createEPUB(
+  logger: Logger,
   contents: SplittedContent[],
   metadata: Metadata,
   images: {id: string, blob: Blob}[],
@@ -38,14 +40,20 @@ async function createEPUB(
   }
 
   const epub = await jepub.generate('blob', (metadata: { percent: number, currentFile: string }) => {
-    console.log('progression: ' + metadata.percent.toFixed(2) + ' %');
+    logger.log(`progression: ${metadata.percent.toFixed(2)} %`);
 
     if (metadata.currentFile) {
-      console.log('current file = ' + metadata.currentFile);
+      logger.log(`current file = ${metadata.currentFile}`);
     }
   }) as Blob;
 
   return {title: metadata.title, epub};
 }
 
-export default new Step(DESCRIPTION, createEPUB);
+export default function createEpubStep(logger: Logger) {
+  return new Step(DESCRIPTION, (
+    contents: SplittedContent[],
+    metadata: Metadata,
+    images: {id: string, blob: Blob}[],
+  ) => createEPUB(logger, contents, metadata, images));
+}

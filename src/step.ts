@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { Logger } from './logger';
+
 const TEMPLATE_ERROR_MESSAGE = '[ERROR] Error on "%s"';
 
 export class Step {
@@ -12,18 +14,7 @@ export class Step {
   }
 
   run(...params: any[]) {
-    if (this.name) {
-      console.log(this.name);
-    }
-
-    try {
-      return this.executeFunction(...params);
-    } catch (error) {
-      const message = TEMPLATE_ERROR_MESSAGE.replace('%s', this.name);
-      console.error(message);
-
-      throw error;
-    }
+    return this.executeFunction(...params);
   }
 
   getStepCount() {
@@ -35,10 +26,13 @@ export class SubProcessStep extends Step {
   private readonly processFactory: (...params: any[]) => Process;
 
   constructor(name: string, processFactory: (...params: any[]) => Process) {
-    super(name, (callbackStepCompleted: () => void, ...params) => {
-      return processFactory(...params).process(callbackStepCompleted);
-    });
+    super(name, () => {});
     this.processFactory = processFactory;
+  }
+
+  override run(...args: any[]) {
+    const [callbackStepCompleted, logger, ...params] = args;
+    return this.processFactory(...params).process(callbackStepCompleted, logger);
   }
 
   getStepCount() {
@@ -81,23 +75,31 @@ export class Process {
     return this.stepsFlow.reduce((sum, { step }) => sum + step.getStepCount(), 0);
   }
 
-  async process(callbackStepCompleted: () => void) {
+  async process(callbackStepCompleted: () => void, logger: Logger) {
     const results: any[] = [];
     let result: any = null;
 
     for (const { step, dependenciesIndex } of this.stepsFlow) {
       const params: any[] = dependenciesIndex.map(idx => results[idx]);
 
-      if (step instanceof SubProcessStep) {
-        result = step.run(callbackStepCompleted, ...params);
-      } else {
-        result = step.run(...params);
-      }
+      logger.log(step.name);
 
-      if (result instanceof Promise) {
-        results.push(await result);
-      } else {
-        results.push(result);
+      try {
+        if (step instanceof SubProcessStep) {
+          result = step.run(callbackStepCompleted, logger, ...params);
+        } else {
+          result = step.run(...params);
+        }
+
+        if (result instanceof Promise) {
+          results.push(await result);
+        } else {
+          results.push(result);
+        }
+      } catch (error) {
+        const message = TEMPLATE_ERROR_MESSAGE.replace('%s', step.name);
+        logger.error(message);
+        throw error;
       }
 
       callbackStepCompleted();

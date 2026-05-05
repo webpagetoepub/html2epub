@@ -17,6 +17,11 @@ const HTML = `<!DOCTYPE html>
   </body>
 </html>`;
 
+class MockLogger {
+  log() {}
+  error() {}
+}
+
 test('converts an HTML page to an EPUB without crashing', async () => {
   const url = 'https://example.com/article';
   const loadImageFrom = async (_: string): Promise<Blob> => new Blob([], { type: 'image/png' });
@@ -27,6 +32,7 @@ test('converts an HTML page to an EPUB without crashing', async () => {
     loadImageFrom,
     () => {},
     () => {},
+    new MockLogger(),
   );
 
   assert.ok(result, 'result should be defined');
@@ -46,6 +52,7 @@ test('reports correct total step count and sequential progress through all sub-s
     loadImageFrom,
     () => reportedSteps.push(++currentStep),
     (length) => { reportedLength = length; },
+    new MockLogger(),
   );
 
   const expectedSteps = Array.from({ length: 32 }, (_, i) => i + 1);
