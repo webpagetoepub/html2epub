@@ -1,11 +1,7 @@
 import { Step } from '../step';
 import replaceElementWithStructure from '../replace_element';
 
-interface MyMap {
-  [key: string]: string[];
-}
-
-const SIMPLE_TAGS: MyMap = {
+const SIMPLE_TAGS: Record<string, string[]> = {
   'div': [
     'article', 'aside', 'details', 'figure', 'fieldset', 'footer', 'form',
     'header', 'hgroup', 'main', 'noframes', 'noscript', 'picture', 'search',

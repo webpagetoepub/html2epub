@@ -50,7 +50,7 @@ export default function loadImagesStepFactory(loadImageFrom: (url: string) => Pr
   }
 
   function memoizedLoadImage() {
-    const cache: {[src: string]: Promise<LoadedImage>} = {};
+    const cache: Record<string, Promise<LoadedImage>> = {};
 
     return (image: Element) => {
       const srcURL = image.getAttribute('src')!;

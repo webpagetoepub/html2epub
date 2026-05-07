@@ -1,15 +1,9 @@
 import { Step } from '../step';
 import replaceElementWithStructure from '../replace_element';
 
-interface MyCSSProperties {
-  [property: string]: string;
-}
-interface MyMap {
-  [key: string]: {
-    tag: string,
-    properties: MyCSSProperties,
-  };
-}
+type MyCSSProperties = Record<string, string>;
+
+type MyMap = Record<string, {tag: string, properties: MyCSSProperties}>;
 
 const SIMPLE_TAGS: MyMap = {
   'mark': {

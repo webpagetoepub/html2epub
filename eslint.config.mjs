@@ -6,6 +6,7 @@ import globals from 'globals';
 export default defineConfig(
   eslint.configs.recommended,
   tseslint.configs.recommended,
+  tseslint.configs.stylistic,
   {
     'rules': {
       '@typescript-eslint/no-unused-vars': [

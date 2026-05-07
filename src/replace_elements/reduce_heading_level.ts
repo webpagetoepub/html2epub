@@ -3,7 +3,7 @@ import replaceElementWithStructure from '../replace_element';
 
 const DESCRIPTION = 'Reducing the heading level';
 
-const HEADING_MAP: { [key: string]: string } = {
+const HEADING_MAP: Record<string, string> = {
   'H1': 'h2',
   'H2': 'h3',
   'H3': 'h4',

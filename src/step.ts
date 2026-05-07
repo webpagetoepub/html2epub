@@ -26,6 +26,7 @@ export class SubProcessStep extends Step {
   private readonly processFactory: (...params: any[]) => Process;
 
   constructor(name: string, processFactory: (...params: any[]) => Process) {
+    /* eslint-disable @typescript-eslint/no-empty-function */
     super(name, () => {});
     this.processFactory = processFactory;
   }
