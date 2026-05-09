@@ -55,7 +55,7 @@ test('reports correct total step count and sequential progress through all sub-s
     new MockLogger(),
   );
 
-  const expectedSteps = Array.from({ length: 32 }, (_, i) => i + 1);
-  assert.strictEqual(reportedLength, 32);
+  const expectedSteps = Array.from({ length: 31 }, (_, i) => i + 1);
+  assert.strictEqual(reportedLength, 31);
   assert.deepStrictEqual(reportedSteps, expectedSteps);
 });

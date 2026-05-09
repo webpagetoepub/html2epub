@@ -7,7 +7,6 @@ import removeAttributes from './remove_attributes';
 import mergeTextNodes from './merge_text_nodes';
 import removeExtraWhitespacesFromDocument from './remove_whitespaces';
 import removeEmptySVGs from './remove_empty_svg';
-import removeEmptyHeadings from './remove_empty_headings';
 import { Step, SubProcessStep, Process } from '../step';
 
 const DESCRIPTION = 'Cleaning HTML document';
@@ -27,7 +26,6 @@ function buildCleanDocumentProcess(htmlDoc: HTMLDocument): Process {
     {step: mergeTextNodes, dependencies: [firstStep]},
     {step: removeExtraWhitespacesFromDocument, dependencies: [firstStep]},
     {step: removeEmptySVGs, dependencies: [firstStep]},
-    {step: removeEmptyHeadings, dependencies: [firstStep]},
   ]);
 }
 
