@@ -3,12 +3,12 @@ import { Step } from '../step';
 const DESCRIPTION = 'Removing extra whitespaces';
 
 
-function removeExtraWhitespacesFromDocument(
-  htmlDoc: HTMLDocument,
-) {
+function removeExtraWhitespacesFromDocument(htmlDoc: HTMLDocument) {
   function filterNode() {
     return NodeFilter.FILTER_ACCEPT;
   }
+
+  mergeTextNodesElement(htmlDoc.documentElement);
 
   const iterator = htmlDoc.createNodeIterator(
     htmlDoc.documentElement,
@@ -19,6 +19,31 @@ function removeExtraWhitespacesFromDocument(
 
   while ((node = iterator.nextNode()) !== null) {
     removeExtraWhitespaces(node as Text);
+  }
+}
+
+function mergeTextNodesElement(element: Element) {
+  const childNodesList = Array.from(element.childNodes);
+  let lastNodeIsTextNode = false;
+
+  for (let i = childNodesList.length - 1; i >= 0; i--) {
+    const currentNode = childNodesList[i];
+    const currentNodeIsTextNode = currentNode.nodeType === Node.TEXT_NODE;
+
+    if (lastNodeIsTextNode && currentNodeIsTextNode) {
+      const lastNode = childNodesList[i + 1];
+      currentNode.nodeValue! += lastNode.nodeValue!;
+
+      lastNode.remove();
+    }
+
+    lastNodeIsTextNode = currentNodeIsTextNode;
+  }
+
+  for (const child of Array.from(element.children)) {
+    if (child.childNodes) {
+      mergeTextNodesElement(child);
+    }
   }
 }
 

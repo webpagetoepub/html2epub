@@ -4,7 +4,6 @@ import removeAllComments from './remove_comments';
 import removeEmptyElements from './remove_empty_elements';
 import removeDataAttributes from './remove_data_attributes';
 import removeAttributes from './remove_attributes';
-import mergeTextNodes from './merge_text_nodes';
 import removeExtraWhitespacesFromDocument from './remove_whitespaces';
 import removeEmptySVGs from './remove_empty_svg';
 import { Step, SubProcessStep, Process } from '../step';
@@ -23,7 +22,6 @@ function buildCleanDocumentProcess(htmlDoc: HTMLDocument): Process {
     {step: removeEmptyElements, dependencies: [firstStep]},
     {step: removeDataAttributes, dependencies: [firstStep]},
     {step: removeAttributes, dependencies: [firstStep]},
-    {step: mergeTextNodes, dependencies: [firstStep]},
     {step: removeExtraWhitespacesFromDocument, dependencies: [firstStep]},
     {step: removeEmptySVGs, dependencies: [firstStep]},
   ]);
