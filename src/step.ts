@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { Logger } from './logger';
+
 const TEMPLATE_ERROR_MESSAGE = '[ERROR] Error on "%s"';
 
 export class Step {
-  private name: string;
-  private executeFunction: (...params: any[]) => any;
+  readonly name: string;
+  private readonly executeFunction: (...params: any[]) => any;
 
   constructor(name: string, executeFunction: (...params: any[]) => any) {
     this.name = name;
@@ -12,29 +14,42 @@ export class Step {
   }
 
   run(...params: any[]) {
-    if (this.name) {
-      console.log(this.name);
-    }
+    return this.executeFunction(...params);
+  }
 
-    try {
-      return this.executeFunction(...params);
-    } catch (error) {
-      const message = TEMPLATE_ERROR_MESSAGE.replace('%s', this.name);
-      console.error(message);
+  getStepCount() {
+    return 1;
+  }
+}
 
-      throw error;
-    }
+export class SubProcessStep extends Step {
+  private readonly processFactory: (...params: any[]) => Process;
+
+  constructor(name: string, processFactory: (...params: any[]) => Process) {
+    /* eslint-disable @typescript-eslint/no-empty-function */
+    super(name, () => {});
+    this.processFactory = processFactory;
+  }
+
+  override run(...args: any[]) {
+    const [callbackStepCompleted, logger, ...params] = args;
+    return this.processFactory(...params).process(callbackStepCompleted, logger);
+  }
+
+  getStepCount() {
+    return this.processFactory().getLength() + 1;
   }
 }
 
 export class Process {
   private stepsFlow: {step: Step, dependenciesIndex: number[]}[];
 
-  constructor() {
+  constructor(steps: {step: Step, dependencies?: Step[]}[]) {
     this.stepsFlow = [];
+    steps.forEach(step => this.addStep(step.step, step.dependencies));
   }
 
-  addStep(step: Step, dependencies: Step[] = []) {
+  private addStep(step: Step, dependencies: Step[] = []) {
     const dependenciesIndex: number[] = [];
     for (const dependency of dependencies) {
       let found = false;
@@ -49,37 +64,46 @@ export class Process {
       }
 
       if (!found) {
-        throw new Error('Failed to create execution dependency.');
+        const dependenciesNames = dependencies.map(dependency => dependency.name);
+        throw new Error(`Failed to create execution dependency. Step "${step.name}" depends on: ${dependenciesNames}.`);
       }
     }
 
     this.stepsFlow.push({ step, dependenciesIndex });
   }
 
-  async process(callbackStep: (currentStep: number) => void, callbackLength: (length: number) => void) {
-    const length = this.stepsFlow.length;
-    const results = [];
-    let result = null;
+  getLength(): number {
+    return this.stepsFlow.reduce((sum, { step }) => sum + step.getStepCount(), 0);
+  }
 
-    callbackLength(length);
-    for (let i = 0; i < length; i++) {
-      const stepWithDependencies = this.stepsFlow[i];
-      const params: any[] = [];
+  async process(callbackStepCompleted: () => void, logger: Logger) {
+    const results: any[] = [];
+    let result: any = null;
 
-      for (const dependencyIndex of stepWithDependencies.dependenciesIndex) {
-        params.push(results[dependencyIndex]);
+    for (const { step, dependenciesIndex } of this.stepsFlow) {
+      const params: any[] = dependenciesIndex.map(idx => results[idx]);
+
+      logger.log(step.name);
+
+      try {
+        if (step instanceof SubProcessStep) {
+          result = step.run(callbackStepCompleted, logger, ...params);
+        } else {
+          result = step.run(...params);
+        }
+
+        if (result instanceof Promise) {
+          results.push(await result);
+        } else {
+          results.push(result);
+        }
+      } catch (error) {
+        const message = TEMPLATE_ERROR_MESSAGE.replace('%s', step.name);
+        logger.error(message);
+        throw error;
       }
 
-      const step = stepWithDependencies.step;
-      result = step.run(...params);
-
-      if (result instanceof Promise) {
-        results.push(await result);
-      } else {
-        results.push(result);
-      }
-
-      callbackStep(i + 1);
+      callbackStepCompleted();
     }
 
     return result;

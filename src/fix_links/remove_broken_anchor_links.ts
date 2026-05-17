@@ -9,7 +9,7 @@ function removeBrokenAnchorLinks(splitedContents: Element[]) {
     const anchorLinkElements = Array.from(splitedContent.querySelectorAll('a[href^="#"]'));
 
     for (const anchorLinkElement of anchorLinkElements) {
-      const anchor = anchorLinkElement.getAttribute('href').substring(1);
+      const anchor = anchorLinkElement.getAttribute('href')!.substring(1);
       const indexContent = indexOfAnchor(splitedContents, anchor);
 
       if (indexContent === -1) {

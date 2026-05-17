@@ -45,7 +45,7 @@ function splitMainContent(mainContent: Element, metadata: {title: string}, eleme
     const newRootContentElement = document.createElement('div');
     const title = recursiveSplitContent(ancestors, newRootContentElement);
 
-    if (newRootContentElement.innerText.trim() !== '') {
+    if (newRootContentElement.textContent.trim() !== '') {
       contentElements.push({title, element: newRootContentElement});
     }
   }
@@ -54,7 +54,7 @@ function splitMainContent(mainContent: Element, metadata: {title: string}, eleme
   if (remainingText.length >= REMAINING_TEXT_LIMIT) {
     const newRootContentElement = document.createElement('div');
     moveElementsToNewParent(mainContent, newRootContentElement);
-    if (newRootContentElement.innerText.trim() !== '') {
+    if (newRootContentElement.textContent.trim() !== '') {
       contentElements.push({title: metadata.title, element: newRootContentElement});
     }
   }
@@ -67,10 +67,10 @@ function recursiveSplitContent(
   newParentElement: Element,
 ): string {
   const cloneAncestors = [ ...ancestors ];
-  const element = cloneAncestors.pop();
+  const element = cloneAncestors.pop()!;
   const currentParentElement = element.parentNode as Element;
 
-  let title;
+  let title = '';
   if (cloneAncestors.length > 0) {
     const newElement = cloneElementOnly(element);
     title = recursiveSplitContent(cloneAncestors, newElement);
@@ -82,7 +82,7 @@ function recursiveSplitContent(
   if (cloneAncestors.length === 0) {
     element.remove();
 
-    title = (element as HTMLElement).innerText;
+    title = (element as HTMLElement).textContent;
   }
 
   return title;

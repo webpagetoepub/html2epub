@@ -34,7 +34,7 @@ function removeEmptyElements(htmlDoc: HTMLDocument) {
 
 function removeIfEmptyElement(element: HTMLElement) {
   if (canRemoveElement(element)) {
-    const parentElement = element.parentElement;
+    const parentElement = element.parentElement!;
     element.remove();
 
     removeIfEmptyElement(parentElement);

@@ -1,56 +1,51 @@
 import convertTextToDOM from './convert_text_dom';
 import getMetadata from './get_metadata';
 import cleanDocument from './clean_document';
-import reduceHeadingLevelPage from './reduce_heading_level';
+import replaceElements from './replace_elements';
 import getMainContent from './get_main_content';
 import splitContentByHeadings, { SplittedElement } from './split_main_content';
-import convertNoscriptToDiv from './convert_noscript_div';
 import loadImagesStepFactory from './load_images';
-import createEPUB from './create_epub';
+import createEpubStepFactory from './create_epub';
 import fixLinks from './fix_links';
 import { Step, Process } from './step';
+import { Logger } from './logger';
 
 
 export default async function convertDocumentToEPub(
   url: string,
   htmlContent: Promise<string>,
   loadImageFrom: (url: string) => Promise<Blob>,
-  callbackStep: (currentStep: number) => void,
+  callbackStepCompleted: () => void,
   callbackLength: (length: number) => void,
+  logger: Logger,
 ) {
-  const urlStep = new Step(null, () => url);
+  const urlStep = new Step('URL recover step', () => url);
   const htmlContentStep = new Step(`Loading "${url}"`, () => htmlContent);
   const convertSplitedContentInHTMLContentStep = new Step(
-    null,
+    'Convert splited content in HTML content',
     convertSplitedContentInHTMLContent,
   );
   const loadImages = loadImagesStepFactory(loadImageFrom);
+  const createEPUB = createEpubStepFactory(logger);
 
-  const convertDocumentProcess = new Process();
-  convertDocumentProcess.addStep(urlStep);
-  convertDocumentProcess.addStep(htmlContentStep);
-  convertDocumentProcess.addStep(convertTextToDOM, [htmlContentStep]);
-  convertDocumentProcess.addStep(getMetadata, [convertTextToDOM, urlStep]);
-  convertDocumentProcess.addStep(cleanDocument, [convertTextToDOM]);
-  convertDocumentProcess.addStep(reduceHeadingLevelPage, [convertTextToDOM]);
-  convertDocumentProcess.addStep(getMainContent, [convertTextToDOM]);
-  convertDocumentProcess.addStep(convertNoscriptToDiv, [getMainContent]);
-  convertDocumentProcess.addStep(loadImages, [getMainContent, urlStep]);
-  convertDocumentProcess.addStep(
-    splitContentByHeadings,
-    [getMainContent, getMetadata],
-  );
-  convertDocumentProcess.addStep(fixLinks, [splitContentByHeadings, urlStep]);
-  convertDocumentProcess.addStep(
-    convertSplitedContentInHTMLContentStep,
-    [splitContentByHeadings],
-  );
-  convertDocumentProcess.addStep(
-    createEPUB,
-    [convertSplitedContentInHTMLContentStep, getMetadata, loadImages],
-  );
+  const convertDocumentProcess = new Process([
+    {step: urlStep},
+    {step: htmlContentStep},
+    {step: convertTextToDOM, dependencies: [htmlContentStep]},
+    {step: getMetadata, dependencies: [convertTextToDOM, urlStep]},
+    {step: cleanDocument, dependencies: [convertTextToDOM]},
+    {step: replaceElements, dependencies: [convertTextToDOM]},
+    {step: getMainContent, dependencies: [convertTextToDOM]},
+    {step: loadImages, dependencies: [getMainContent, urlStep]},
+    {step: splitContentByHeadings, dependencies: [getMainContent, getMetadata]},
+    {step: fixLinks, dependencies: [splitContentByHeadings, urlStep]},
+    {step: convertSplitedContentInHTMLContentStep, dependencies: [splitContentByHeadings]},
+    {step: createEPUB, dependencies: [convertSplitedContentInHTMLContentStep, getMetadata, loadImages]},
+  ]);
 
-  return await convertDocumentProcess.process(callbackStep, callbackLength);
+  callbackLength(convertDocumentProcess.getLength());
+
+  return await convertDocumentProcess.process(callbackStepCompleted, logger);
 }
 
 function convertSplitedContentInHTMLContent(
@@ -68,10 +63,5 @@ function getHtmlContent(element: Element) {
   const xhtmlCode = new XMLSerializer().serializeToString(xhtmlElement);
   const xhtmlDocument = new DOMParser().parseFromString(xhtmlCode, 'text/html');
 
-  return replaceCommentsImagesByImages(xhtmlDocument.body.innerHTML);
-}
-
-function replaceCommentsImagesByImages(content: string) {
-  return content.replace(/<!--\s*<%= image\[/g, '<%= image[')
-                .replace(/] %>\s*-->/g, '] %>');
+  return xhtmlDocument.body.innerHTML;
 }

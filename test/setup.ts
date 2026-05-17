@@ -12,7 +12,7 @@ const PLACEHOLDER_PNG =
 
 const dom = new JSDOM('', { url: 'https://example.com' });
 const domGlobals = [
-  'DOMParser', 'XMLSerializer', 'document', 'NodeFilter', 'Node',
+  'DOMParser', 'XMLSerializer', 'XMLDocument', 'document', 'NodeFilter', 'Node',
   'Element', 'HTMLElement', 'Text', 'Comment', 'DocumentFragment',
   'MutationObserver', 'NodeIterator', 'TreeWalker', 'Range',
 ];

@@ -10,9 +10,9 @@ function removeEmptySVGs(htmlDoc: HTMLDocument) {
   const parser = new DOMParser();
   const images = Array.from(htmlDoc.querySelectorAll('img[src]'));
   images
-      .filter(image => image.getAttribute('src').startsWith('data:image/svg+xml'))
+      .filter(image => image.getAttribute('src')!.startsWith('data:image/svg+xml'))
       .forEach(image => {
-        const src = image.getAttribute('src');
+        const src = image.getAttribute('src')!;
         fetch(src)
             .then(response => response.text())
             .then(content => parser.parseFromString(content, 'text/xml'))
@@ -33,7 +33,7 @@ export function isEmptySvg(svg: XMLDocument | SVGElement) {
 }
 
 function isEmptySvgXML(svg: XMLDocument) {
-  return svg.rootElement.children.length === 0;
+  return svg.rootElement!.children.length === 0;
 }
 
 function isEmptySvgElement(svg: SVGElement) {

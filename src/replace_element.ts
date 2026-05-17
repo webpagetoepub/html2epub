@@ -1,7 +1,7 @@
 export default function replaceElementWithStructure(from: Element, to: Element) {
   copyAttributes(from, to);
   transferChildNodes(from, to);
-  from.parentNode.replaceChild(to, from);
+  (from.parentNode as Element).replaceChild(to, from);
 }
 
 function copyAttributes(from: Element, to: Element) {

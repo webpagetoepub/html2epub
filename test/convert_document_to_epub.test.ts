@@ -17,6 +17,11 @@ const HTML = `<!DOCTYPE html>
   </body>
 </html>`;
 
+class MockLogger {
+  log() {}
+  error() {}
+}
+
 test('converts an HTML page to an EPUB without crashing', async () => {
   const url = 'https://example.com/article';
   const loadImageFrom = async (_: string): Promise<Blob> => new Blob([], { type: 'image/png' });
@@ -27,8 +32,30 @@ test('converts an HTML page to an EPUB without crashing', async () => {
     loadImageFrom,
     () => {},
     () => {},
+    new MockLogger(),
   );
 
   assert.ok(result, 'result should be defined');
   assert.ok(result.epub instanceof Blob, 'result.epub should be a Blob');
+});
+
+test('reports correct total step count and sequential progress through all sub-steps', async () => {
+  const url = 'https://example.com/article';
+  const loadImageFrom = async (_: string): Promise<Blob> => new Blob([], { type: 'image/png' });
+  const reportedSteps: number[] = [];
+  let reportedLength = 0;
+  let currentStep = 0;
+
+  await convertDocumentToEPub(
+    url,
+    Promise.resolve(HTML),
+    loadImageFrom,
+    () => reportedSteps.push(++currentStep),
+    (length) => { reportedLength = length; },
+    new MockLogger(),
+  );
+
+  const expectedSteps = Array.from({ length: 30 }, (_, i) => i + 1);
+  assert.strictEqual(reportedLength, 30);
+  assert.deepStrictEqual(reportedSteps, expectedSteps);
 });
