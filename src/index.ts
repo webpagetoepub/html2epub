@@ -58,10 +58,18 @@ function convertSplitedContentInHTMLContent(
 }
 
 function getHtmlContent(element: Element) {
-  const htmlCode = new XMLSerializer().serializeToString(element);
-  const xhtmlElement = new DOMParser().parseFromString(htmlCode, 'text/html');
-  const xhtmlCode = new XMLSerializer().serializeToString(xhtmlElement);
-  const xhtmlDocument = new DOMParser().parseFromString(xhtmlCode, 'text/html');
+  const xmlSerializer = new XMLSerializer();
+  const domParser = new DOMParser();
 
-  return xhtmlDocument.body.innerHTML;
+  const htmlCode = xmlSerializer.serializeToString(element);
+  const xhtmlElement = domParser.parseFromString(htmlCode, 'text/html');
+  const xhtmlCode = xmlSerializer.serializeToString(xhtmlElement);
+  const xhtmlDocument = domParser.parseFromString(xhtmlCode, 'text/html');
+
+  return replaceCommentsImagesByImages(xhtmlDocument.body.innerHTML);
+}
+
+function replaceCommentsImagesByImages(content: string) {
+  return content.replace(/<!--\s*<%= image\[/g, '<%= image[')
+                .replace(/] %>\s*-->/g, '] %>');
 }
