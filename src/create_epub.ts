@@ -25,7 +25,7 @@ async function createEPUB(
   logger: Logger,
   contents: SplittedContent[],
   metadata: Metadata,
-  images: {id: string, blob: Blob}[],
+  images: {id: string, blob: Blob, attributes: Record<string, string>}[],
 ): Promise<{title: string, epub: Blob}> {
   const jepub = new jEpub();
 
@@ -33,7 +33,7 @@ async function createEPUB(
   jepub.uuid(metadata.uuid);
   jepub.date(metadata.date);
 
-  images.forEach(image => jepub.image(image.blob, image.id));
+  images.forEach(image => jepub.image(image.blob, image.id, image.attributes));
 
   for (const content of contents) {
     jepub.add(content.title, content.content);
@@ -54,6 +54,6 @@ export default function createEpubStep(logger: Logger) {
   return new Step(DESCRIPTION, (
     contents: SplittedContent[],
     metadata: Metadata,
-    images: {id: string, blob: Blob}[],
+    images: {id: string, blob: Blob, attributes: Record<string, string>}[],
   ) => createEPUB(logger, contents, metadata, images));
 }

@@ -9,6 +9,7 @@ const parser = new DOMParser();
 interface LoadedImage {
   id: string;
   blob: Blob;
+  attributes: Record<string, string>;
 }
 
 
@@ -74,12 +75,21 @@ export default function loadImagesStepFactory(loadImageFrom: (url: string) => Pr
         }
 
         const id = generateHash(srcURL);
+        const attributes = Array.from(image.attributes).reduce((acc: Record<string, string>, attribute) => {
+          if (attribute.nodeValue) {
+            acc[attribute.nodeName] = attribute.nodeValue;
+          } else if (attribute.nodeName !== 'alt') {
+            acc[attribute.nodeName] = attribute.nodeName;
+          }
 
-        return {id, blob};
+          return acc;
+        }, {});
+
+        return {id, blob, attributes};
       }).catch(_ => {
         return fetch(NO_IMAGE_DATA_URL)
             .then(response => response.blob())
-            .then(blob => ({id: 'no-image', blob}));
+            .then(blob => ({id: 'no-image', blob, attributes: {}}));
       });
 
       cache[srcURL] = promise;
