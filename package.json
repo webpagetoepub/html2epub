@@ -24,6 +24,7 @@
     "@types/jsdom": "^28.0.1",
     "@types/node": "^25.6.0",
     "eslint": "^10.2.0",
+    "fflate": "^0.8.2",
     "globals": "^17.4.0",
     "jsdom": "^29.0.2",
     "tsx": "^4.21.0",
@@ -31,6 +32,6 @@
     "typescript-eslint": "^8.58.0"
   },
   "dependencies": {
-    "jepub": "github:webpagetoepub/jEpub#fd264d5acadd693ebfffde26a5d879cdf7c2dcfb"
+    "jepub": "github:webpagetoepub/jEpub#2b5c8a4395e01d0e2c26ab4327f3109be5eee2c8"
   }
 }
