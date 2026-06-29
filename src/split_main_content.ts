@@ -14,17 +14,17 @@ function splitMainContentByHeadings(
   mainContent: Element,
   metadata: {title: string},
 ): SplittedElement[] {
-  let headings = Array.from(mainContent.getElementsByTagName('h2'));
+  const headingsLevel2 = Array.from(mainContent.getElementsByTagName('h2')).filter(hasTitle);
 
-  if (headings.length === 0) {
+  if (headingsLevel2.length === 0) {
     return [{title: metadata.title, element: mainContent}];
   }
 
-  if (headings.length > 1) {
-    return splitMainContent(mainContent, metadata, headings);
+  if (headingsLevel2.length > 1) {
+    return splitMainContent(mainContent, metadata, headingsLevel2);
   }
 
-  headings = Array.from(mainContent.querySelectorAll('h2, h3'));
+  const headings = Array.from(mainContent.querySelectorAll('h2, h3')).filter(hasTitle);
 
   return splitMainContent(mainContent, metadata, headings);
 }
@@ -130,6 +130,10 @@ function moveElementsToNewParent(
     currentParentElement.removeChild(childNode);
     newParentElement.appendChild(childNode);
   }
+}
+
+function hasTitle(heading: Element): boolean {
+  return heading.textContent.trim() !== '';
 }
 
 export default new Step(DESCRIPTION, splitMainContentByHeadings);

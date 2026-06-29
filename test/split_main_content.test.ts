@@ -82,6 +82,32 @@ test('omits remaining content before first heading when it is shorter than 80 ch
   assert.ok(!titles.includes('Article'), 'short intro should be dropped');
 });
 
+test('does not split at a heading that is empty', () => {
+  const main = makeElement(
+    '<h2></h2><p>Content one here.</p>' +
+    '<h2>Real Chapter</h2><p>Content two here.</p>'
+  );
+  const metadata = { title: 'Book' };
+
+  const result = splitMainContent.run(main, metadata);
+
+  const titles = result.map(r => r.title);
+  assert.ok(!titles.some(title => title.trim() === ''), 'blank heading should not create a chapter');
+});
+
+test('does not split at a heading that has only whitespace, tabs and line breaks', () => {
+  const main = makeElement(
+    '<h2> \t\n\r </h2><p>Content one here.</p>' +
+    '<h2>Real Chapter</h2><p>Content two here.</p>'
+  );
+  const metadata = { title: 'Book' };
+
+  const result = splitMainContent.run(main, metadata);
+
+  const titles = result.map(r => r.title);
+  assert.ok(!titles.some(title => title.trim() === ''), 'whitespace-only heading should not create a chapter');
+});
+
 function makeElement(bodyHTML: string): Element {
   const doc = document.implementation.createHTMLDocument('');
   doc.body.innerHTML = bodyHTML;
