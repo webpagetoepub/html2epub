@@ -3,6 +3,7 @@ import * as assert from 'node:assert/strict';
 import { unzipSync, strFromU8 } from 'fflate';
 import convertDocumentToEPub from '../src/index';
 
+const STEPS_LENGTH = 31;
 const HTML = `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -56,8 +57,8 @@ test('reports correct total step count and sequential progress through all sub-s
     new MockLogger(),
   );
 
-  const expectedSteps = Array.from({ length: 30 }, (_, i) => i + 1);
-  assert.strictEqual(reportedLength, 30);
+  const expectedSteps = Array.from({ length: STEPS_LENGTH }, (_, i) => i + 1);
+  assert.strictEqual(reportedLength, STEPS_LENGTH);
   assert.deepStrictEqual(reportedSteps, expectedSteps);
 });
 
