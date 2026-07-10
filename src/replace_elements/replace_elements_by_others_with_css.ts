@@ -22,7 +22,19 @@ const SIMPLE_TAGS: MyMap = {
   'center': {
     tag: 'div',
     properties: {'text-align': 'center'},
-  }
+  },
+  'table': {
+    tag: 'table',
+    properties: {'border-collapse': 'collapse'},
+  },
+  'th': {
+    tag: 'th',
+    properties: {'border': '1px solid black'},
+  },
+  'td': {
+    tag: 'td',
+    properties: {'border': '1px solid black'},
+  },
 };
 
 const DESCRIPTION = 'Replace elements by others with CSS style';
