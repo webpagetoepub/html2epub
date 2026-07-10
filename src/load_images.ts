@@ -73,14 +73,16 @@ export default function loadImagesStepFactory(
       const promise = loadImageFrom(srcURL)
         .then(async (blob) => {
           if (!blob.type.startsWith("image/")) {
-            throw new Error();
+            throw new Error(
+              `Expected an image/* blob for "${srcURL}", got "${blob.type}".`,
+            );
           }
 
           if (blob.type === "image/svg+xml") {
             const svgContent = await blob.text();
             const svg = parser.parseFromString(svgContent, "text/xml");
             if (isEmptySvg(svg)) {
-              throw new Error();
+              throw new Error(`Expected a non-empty SVG for "${srcURL}".`);
             }
           }
 
