@@ -1,31 +1,66 @@
-import { Step } from '../step';
+import { Step } from "../step";
 
-const DESCRIPTION = 'Removing unused element attributes';
+const DESCRIPTION = "Removing unused element attributes";
 
-const STYLE_ATTRIBUTES_TO_REMOVE = ['style', 'class'];
+const STYLE_ATTRIBUTES_TO_REMOVE = ["style", "class"];
 
 const WINDOW_EVENT_ATTRIBUTES_TO_REMOVE = [
-  'onafterprint', 'onbeforeprint', 'onbeforeunload', 'onerror', 'onhashchange',
-  'onload', 'onmessage', 'onoffline', 'ononline', 'onpagehide', 'onpageshow',
-  'onpopstate', 'onresize', 'onstorage', 'onunload',
+  "onafterprint",
+  "onbeforeprint",
+  "onbeforeunload",
+  "onerror",
+  "onhashchange",
+  "onload",
+  "onmessage",
+  "onoffline",
+  "ononline",
+  "onpagehide",
+  "onpageshow",
+  "onpopstate",
+  "onresize",
+  "onstorage",
+  "onunload",
 ];
 const FORM_EVENTS_ATTRIBUTES_TO_REMOVE = [
-  'onblur', 'onchange', 'oncontextmenu', 'onfocus', 'oninput', 'oninvalid',
-  'onreset', 'onsearch', 'onselect', 'onsubmit',
+  "onblur",
+  "onchange",
+  "oncontextmenu",
+  "onfocus",
+  "oninput",
+  "oninvalid",
+  "onreset",
+  "onsearch",
+  "onselect",
+  "onsubmit",
 ];
 const KEYBOARD_EVENTS_ATTRIBUTES_TO_REMOVE = [
-  'onkeydown', 'onkeypress', 'onkeyup',
+  "onkeydown",
+  "onkeypress",
+  "onkeyup",
 ];
 const MOUSE_EVENTS_ATTRIBUTES_TO_REMOVE = [
-  'onclick', 'ondblclick', 'onmousedown', 'onmousemove', 'onmouseout',
-  'onmouseover', 'onmouseup', 'onmousewheel', 'onwheel',
+  "onclick",
+  "ondblclick",
+  "onmousedown",
+  "onmousemove",
+  "onmouseout",
+  "onmouseover",
+  "onmouseup",
+  "onmousewheel",
+  "onwheel",
 ];
 const DRAG_EVENTS_ATTRIBUTES_TO_REMOVE = [
-  'ondrag', 'ondragend', 'ondragenter', 'ondragleave', 'ondragover',
-  'ondragstart', 'ondrop', 'onscroll',
+  "ondrag",
+  "ondragend",
+  "ondragenter",
+  "ondragleave",
+  "ondragover",
+  "ondragstart",
+  "ondrop",
+  "onscroll",
 ];
-const CLIPBOARD_EVENTS_ATTRIBUTE_TO_REMOVE = ['oncopy', 'oncut', 'onpaste'];
-const MISC_EVENTS_TO_REMOVE = ['ontoggle'];
+const CLIPBOARD_EVENTS_ATTRIBUTE_TO_REMOVE = ["oncopy", "oncut", "onpaste"];
+const MISC_EVENTS_TO_REMOVE = ["ontoggle"];
 const EVENTS_ATTRIBUTES_TO_REMOVE = [
   ...WINDOW_EVENT_ATTRIBUTES_TO_REMOVE,
   ...FORM_EVENTS_ATTRIBUTES_TO_REMOVE,
@@ -37,26 +72,62 @@ const EVENTS_ATTRIBUTES_TO_REMOVE = [
 ];
 
 const INTERATIVE_ATTRIBUTES_TO_REMOVE = [
-  'contextmenu', 'draggable', 'tabindex', 'for', 'autocomplete', 'capture',
-  'contenteditable', 'crossorigin', 'dirname', 'enterkeyhint', 'form',
-  'formaction', 'formenctype', 'formmethod', 'formnovalidate', 'formtarget',
-  'inputmode', 'list', 'maxlength', 'minlength', 'max', 'min', 'novalidate',
-  'pattern', 'readonly', 'required', 'spellcheck', 'step', 'usemap',
-  'autofocus',
+  "contextmenu",
+  "draggable",
+  "tabindex",
+  "for",
+  "autocomplete",
+  "capture",
+  "contenteditable",
+  "crossorigin",
+  "dirname",
+  "enterkeyhint",
+  "form",
+  "formaction",
+  "formenctype",
+  "formmethod",
+  "formnovalidate",
+  "formtarget",
+  "inputmode",
+  "list",
+  "maxlength",
+  "minlength",
+  "max",
+  "min",
+  "novalidate",
+  "pattern",
+  "readonly",
+  "required",
+  "spellcheck",
+  "step",
+  "usemap",
+  "autofocus",
 ];
 
-const STYLE_BREAK = ['background', 'bgcolor', 'border', 'width', 'heigth'];
+const STYLE_BREAK = ["background", "bgcolor", "border", "width", "heigth"];
 
 const FORM_SUBMISSION = [
-  'accept', 'accept-charset', 'action', 'enctype', 'method',
+  "accept",
+  "accept-charset",
+  "action",
+  "enctype",
+  "method",
 ];
 
 const USELESS = [
-  'loading', 'ping', 'slot', 'sizes', 'decoding', 'crossorigin',
-  'elementtiming', 'fetchpriority', 'referrerpolicy', 'sizes',
+  "loading",
+  "ping",
+  "slot",
+  "sizes",
+  "decoding",
+  "crossorigin",
+  "elementtiming",
+  "fetchpriority",
+  "referrerpolicy",
+  "sizes",
 ];
 
-const OFFLINE = ['srcset', 'attributionsrc'];
+const OFFLINE = ["srcset", "attributionsrc"];
 
 const ATTRIBUTES_TO_REMOVE = [
   ...STYLE_ATTRIBUTES_TO_REMOVE,
@@ -67,7 +138,6 @@ const ATTRIBUTES_TO_REMOVE = [
   ...FORM_SUBMISSION,
   ...OFFLINE,
 ];
-
 
 function removeAttributes(htmlDoc: HTMLDocument) {
   for (const attribute of ATTRIBUTES_TO_REMOVE) {

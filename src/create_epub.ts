@@ -1,10 +1,9 @@
-import jEpub from 'jepub';
+import jEpub from "jepub";
 
-import { Step } from './step';
-import { Logger } from './logger';
+import { Step } from "./step";
+import { Logger } from "./logger";
 
-const DESCRIPTION = 'Creating EPUB file';
-
+const DESCRIPTION = "Creating EPUB file";
 
 export interface SplittedContent {
   title: string;
@@ -25,35 +24,43 @@ async function createEPUB(
   logger: Logger,
   contents: SplittedContent[],
   metadata: Metadata,
-  images: {id: string, blob: Blob, attributes: Record<string, string>}[],
-): Promise<{title: string, epub: Blob}> {
+  images: { id: string; blob: Blob; attributes: Record<string, string> }[],
+): Promise<{ title: string; epub: Blob }> {
   const jepub = new jEpub();
 
-  jepub.init({ i18n: 'en', ...metadata });
+  jepub.init({ i18n: "en", ...metadata });
   jepub.uuid(metadata.uuid);
   jepub.date(metadata.date);
 
-  images.forEach(image => jepub.image(image.blob, image.id, image.attributes));
+  images.forEach((image) =>
+    jepub.image(image.blob, image.id, image.attributes),
+  );
 
   for (const content of contents) {
     jepub.add(content.title, content.content);
   }
 
-  const epub = await jepub.generate('blob', (metadata: { percent: number, currentFile: string }) => {
-    logger.log(`progression: ${metadata.percent.toFixed(2)} %`);
+  const epub = (await jepub.generate(
+    "blob",
+    (metadata: { percent: number; currentFile: string }) => {
+      logger.log(`progression: ${metadata.percent.toFixed(2)} %`);
 
-    if (metadata.currentFile) {
-      logger.log(`current file = ${metadata.currentFile}`);
-    }
-  }) as Blob;
+      if (metadata.currentFile) {
+        logger.log(`current file = ${metadata.currentFile}`);
+      }
+    },
+  )) as Blob;
 
-  return {title: metadata.title, epub};
+  return { title: metadata.title, epub };
 }
 
 export default function createEpubStep(logger: Logger) {
-  return new Step(DESCRIPTION, (
-    contents: SplittedContent[],
-    metadata: Metadata,
-    images: {id: string, blob: Blob, attributes: Record<string, string>}[],
-  ) => createEPUB(logger, contents, metadata, images));
+  return new Step(
+    DESCRIPTION,
+    (
+      contents: SplittedContent[],
+      metadata: Metadata,
+      images: { id: string; blob: Blob; attributes: Record<string, string> }[],
+    ) => createEPUB(logger, contents, metadata, images),
+  );
 }

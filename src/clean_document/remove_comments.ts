@@ -1,7 +1,6 @@
-import { Step } from '../step';
+import { Step } from "../step";
 
-const DESCRIPTION = 'Removing all HTML comments';
-
+const DESCRIPTION = "Removing all HTML comments";
 
 function removeAllComments(htmlDoc: HTMLDocument) {
   function filterNode() {
@@ -12,7 +11,7 @@ function removeAllComments(htmlDoc: HTMLDocument) {
   const iterator = htmlDoc.createNodeIterator(
     htmlDoc.documentElement,
     NodeFilter.SHOW_COMMENT,
-    filterNode
+    filterNode,
   );
   let node: Comment;
 

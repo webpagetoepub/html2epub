@@ -1,35 +1,41 @@
-import { Step } from './step';
+import { Step } from "./step";
 
-const DESCRIPTION = 'Splitting the main content from HTML document by headings';
+const DESCRIPTION = "Splitting the main content from HTML document by headings";
 const REMAINING_TEXT_LIMIT = 80;
-
 
 export interface SplittedElement {
   title: string;
   element: Element;
 }
 
-
 function splitMainContentByHeadings(
   mainContent: Element,
-  metadata: {title: string},
+  metadata: { title: string },
 ): SplittedElement[] {
-  const headingsLevel2 = Array.from(mainContent.getElementsByTagName('h2')).filter(hasTitle);
+  const headingsLevel2 = Array.from(
+    mainContent.getElementsByTagName("h2"),
+  ).filter(hasTitle);
 
   if (headingsLevel2.length === 0) {
-    return [{title: metadata.title, element: mainContent}];
+    return [{ title: metadata.title, element: mainContent }];
   }
 
   if (headingsLevel2.length > 1) {
     return splitMainContent(mainContent, metadata, headingsLevel2);
   }
 
-  const headings = Array.from(mainContent.querySelectorAll('h2, h3')).filter(hasTitle);
+  const headings = Array.from(mainContent.querySelectorAll("h2, h3")).filter(
+    hasTitle,
+  );
 
   return splitMainContent(mainContent, metadata, headings);
 }
 
-function splitMainContent(mainContent: Element, metadata: {title: string}, elementReferences: Element[]) {
+function splitMainContent(
+  mainContent: Element,
+  metadata: { title: string },
+  elementReferences: Element[],
+) {
   const contentElements = [];
 
   for (const elementReference of elementReferences.reverse()) {
@@ -42,20 +48,23 @@ function splitMainContent(mainContent: Element, metadata: {title: string}, eleme
       parentElement = parentElement.parentNode as Element;
     }
 
-    const newRootContentElement = document.createElement('div');
+    const newRootContentElement = document.createElement("div");
     const title = recursiveSplitContent(ancestors, newRootContentElement);
 
-    if (newRootContentElement.textContent.trim() !== '') {
-      contentElements.push({title, element: newRootContentElement});
+    if (newRootContentElement.textContent.trim() !== "") {
+      contentElements.push({ title, element: newRootContentElement });
     }
   }
 
   const remainingText = mainContent.textContent.trim();
   if (remainingText.length >= REMAINING_TEXT_LIMIT) {
-    const newRootContentElement = document.createElement('div');
+    const newRootContentElement = document.createElement("div");
     moveElementsToNewParent(mainContent, newRootContentElement);
-    if (newRootContentElement.textContent.trim() !== '') {
-      contentElements.push({title: metadata.title, element: newRootContentElement});
+    if (newRootContentElement.textContent.trim() !== "") {
+      contentElements.push({
+        title: metadata.title,
+        element: newRootContentElement,
+      });
     }
   }
 
@@ -66,11 +75,11 @@ function recursiveSplitContent(
   ancestors: Element[],
   newParentElement: Element,
 ): string {
-  const cloneAncestors = [ ...ancestors ];
+  const cloneAncestors = [...ancestors];
   const element = cloneAncestors.pop()!;
   const currentParentElement = element.parentNode as Element;
 
-  let title = '';
+  let title = "";
   if (cloneAncestors.length > 0) {
     const newElement = cloneElementOnly(element);
     title = recursiveSplitContent(cloneAncestors, newElement);
@@ -97,9 +106,9 @@ function cloneElementOnly(element: Element) {
 }
 
 function copyAttributes(from: Element, to: Element) {
-    for (const attribute of Array.from(from.attributes)) {
-      to.setAttribute(attribute.name, attribute.value);
-    }
+  for (const attribute of Array.from(from.attributes)) {
+    to.setAttribute(attribute.name, attribute.value);
+  }
 }
 
 function moveElementsToNewParentAfter(
@@ -133,7 +142,7 @@ function moveElementsToNewParent(
 }
 
 function hasTitle(heading: Element): boolean {
-  return heading.textContent.trim() !== '';
+  return heading.textContent.trim() !== "";
 }
 
 export default new Step(DESCRIPTION, splitMainContentByHeadings);

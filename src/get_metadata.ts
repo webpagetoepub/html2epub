@@ -1,7 +1,6 @@
-import { Step } from './step';
+import { Step } from "./step";
 
-const DESCRIPTION = 'Retrieving metadata from HTML document';
-
+const DESCRIPTION = "Retrieving metadata from HTML document";
 
 function getMetadata(htmlDoc: HTMLDocument, url: string) {
   return {
@@ -12,7 +11,7 @@ function getMetadata(htmlDoc: HTMLDocument, url: string) {
     uuid: url,
     description: getDescription(htmlDoc),
     tags: getTags(htmlDoc),
-  }
+  };
 }
 
 function getTitle(htmlDoc: HTMLDocument, url: string) {
@@ -31,35 +30,35 @@ function getTitle(htmlDoc: HTMLDocument, url: string) {
 
 function getDate(htmlDoc: HTMLDocument) {
   const datePublishedStructuredMetadata = htmlDoc.querySelector(
-    'meta[itemprop="datePublished"][content]'
+    'meta[itemprop="datePublished"][content]',
   );
   if (datePublishedStructuredMetadata) {
     try {
-      return new Date(datePublishedStructuredMetadata.getAttribute('content')!);
+      return new Date(datePublishedStructuredMetadata.getAttribute("content")!);
     } catch (_) {
       // continue regardless of error
     }
   }
 
   const startDate = htmlDoc.querySelector(
-    'time[itemprop="startDate"][datetime]'
+    'time[itemprop="startDate"][datetime]',
   );
   if (startDate) {
     try {
-      return new Date(startDate.getAttribute('datetime')!);
+      return new Date(startDate.getAttribute("datetime")!);
     } catch (_) {
       // continue regardless of error
     }
   }
 
-  const contentDate = getContentFromMetatags(
-    htmlDoc,
-    [
-      'article:published_time', 'article:modified_time', 'book:release_date',
-      'og:article:published_time', 'og:article:modified_time',
-      'og:book:release_date',
-    ],
-  );
+  const contentDate = getContentFromMetatags(htmlDoc, [
+    "article:published_time",
+    "article:modified_time",
+    "book:release_date",
+    "og:article:published_time",
+    "og:article:modified_time",
+    "og:book:release_date",
+  ]);
   if (contentDate) {
     try {
       return new Date(contentDate);
@@ -72,16 +71,16 @@ function getDate(htmlDoc: HTMLDocument) {
 }
 
 function getAuthor(htmlDoc: HTMLDocument) {
-  const contentAuthor = getContentFromMetatags(htmlDoc, ['author']);
+  const contentAuthor = getContentFromMetatags(htmlDoc, ["author"]);
   if (contentAuthor) {
     return contentAuthor;
   }
 
   const authorStructuredMetadata = htmlDoc.querySelector(
-    '[itemprop="author"] meta[itemprop="name"][content]'
+    '[itemprop="author"] meta[itemprop="name"][content]',
   );
   if (authorStructuredMetadata) {
-    return authorStructuredMetadata.getAttribute('content');
+    return authorStructuredMetadata.getAttribute("content");
   }
 
   const authorStructured = htmlDoc.querySelector('[itemprop="author"]');
@@ -89,35 +88,41 @@ function getAuthor(htmlDoc: HTMLDocument) {
     return authorStructured.textContent;
   }
 
-  return '';
+  return "";
 }
 
 function getPublisher(htmlDoc: HTMLDocument) {
   const publisherStructuredMetadata = htmlDoc.querySelector(
-    '[itemprop="publisher"] meta[itemprop="name"][content]'
+    '[itemprop="publisher"] meta[itemprop="name"][content]',
   );
   if (publisherStructuredMetadata) {
-    return publisherStructuredMetadata.getAttribute('content');
+    return publisherStructuredMetadata.getAttribute("content");
   }
 
-  return getContentFromMetatags(
-    htmlDoc,
-    ['publisher', 'owner', 'copyright', 'og:site_name'],
-  );
+  return getContentFromMetatags(htmlDoc, [
+    "publisher",
+    "owner",
+    "copyright",
+    "og:site_name",
+  ]);
 }
 
 function getDescription(htmlDoc: HTMLDocument) {
-  return getContentFromMetatags(
-    htmlDoc,
-    ['description', 'og:description', 'subtitle', 'abstract'],
-  ) || '';
+  return (
+    getContentFromMetatags(htmlDoc, [
+      "description",
+      "og:description",
+      "subtitle",
+      "abstract",
+    ]) || ""
+  );
 }
 
 function getTags(htmlDoc: HTMLDocument) {
-  const content = getContentFromMetatags(
-    htmlDoc,
-    ['news_keywords', 'keywords'],
-  );
+  const content = getContentFromMetatags(htmlDoc, [
+    "news_keywords",
+    "keywords",
+  ]);
 
   if (content) {
     return content.split(/\s*,\s*/);
@@ -134,7 +139,7 @@ function getContentFromMetatags(
     const metaElement = htmlDoc.querySelector(`meta[name="${name}"][content]`);
 
     if (metaElement) {
-      const content = metaElement.getAttribute('content')!.trim();
+      const content = metaElement.getAttribute("content")!.trim();
 
       if (content) {
         return content;

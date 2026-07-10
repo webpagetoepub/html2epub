@@ -1,15 +1,17 @@
-import { Step } from '../step';
-import replaceElementWithStructure from '../replace_element';
+import { Step } from "../step";
+import replaceElementWithStructure from "../replace_element";
 
-const DESCRIPTION = 'Remove broken anchor links';
+const DESCRIPTION = "Remove broken anchor links";
 
 function removeBrokenAnchorLinks(splitedContents: Element[]) {
   for (let i = 0, length = splitedContents.length; i < length; i++) {
     const splitedContent = splitedContents[i];
-    const anchorLinkElements = Array.from(splitedContent.querySelectorAll('a[href^="#"]'));
+    const anchorLinkElements = Array.from(
+      splitedContent.querySelectorAll('a[href^="#"]'),
+    );
 
     for (const anchorLinkElement of anchorLinkElements) {
-      const anchor = anchorLinkElement.getAttribute('href')!.substring(1);
+      const anchor = anchorLinkElement.getAttribute("href")!.substring(1);
       const indexContent = indexOfAnchor(splitedContents, anchor);
 
       if (indexContent === -1) {
@@ -26,7 +28,9 @@ function removeBrokenAnchorLinks(splitedContents: Element[]) {
 function indexOfAnchor(splitedContents: Element[], anchor: string) {
   for (let i = 0, length = splitedContents.length; i < length; i++) {
     const splitedContent = splitedContents[i];
-    const anchorElement = splitedContent.querySelector(`[id="${anchor}"],a[name="${anchor}"]`);
+    const anchorElement = splitedContent.querySelector(
+      `[id="${anchor}"],a[name="${anchor}"]`,
+    );
 
     if (anchorElement !== null) {
       return i;
@@ -37,16 +41,16 @@ function indexOfAnchor(splitedContents: Element[], anchor: string) {
 }
 
 function replaceLinkBySpan(anchorLinkElement: Element) {
-  const span = document.createElement('span');
+  const span = document.createElement("span");
   replaceElementWithStructure(anchorLinkElement, span);
-  span.removeAttribute('href');
+  span.removeAttribute("href");
 }
 
 function fixAnchorLink(anchorLinkElement: Element, indexContent: number) {
-  const anchor = anchorLinkElement.getAttribute('href');
+  const anchor = anchorLinkElement.getAttribute("href");
   const newHref = `page-${indexContent}.html${anchor}`;
 
-  anchorLinkElement.setAttribute('href', newHref);
+  anchorLinkElement.setAttribute("href", newHref);
 }
 
 export default new Step(DESCRIPTION, removeBrokenAnchorLinks);

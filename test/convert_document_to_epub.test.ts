@@ -1,7 +1,7 @@
-import { test } from 'node:test';
-import * as assert from 'node:assert/strict';
-import { unzipSync, strFromU8 } from 'fflate';
-import convertDocumentToEPub from '../src/index';
+import { test } from "node:test";
+import * as assert from "node:assert/strict";
+import { unzipSync, strFromU8 } from "fflate";
+import convertDocumentToEPub from "../src/index";
 
 const STEPS_LENGTH = 31;
 const HTML = `<!DOCTYPE html>
@@ -24,9 +24,10 @@ class MockLogger {
   error() {}
 }
 
-test('converts an HTML page to an EPUB without crashing', async () => {
-  const url = 'https://example.com/article';
-  const loadImageFrom = async (_: string): Promise<Blob> => new Blob([], { type: 'image/png' });
+test("converts an HTML page to an EPUB without crashing", async () => {
+  const url = "https://example.com/article";
+  const loadImageFrom = async (_: string): Promise<Blob> =>
+    new Blob([], { type: "image/png" });
 
   const result = await convertDocumentToEPub(
     url,
@@ -37,13 +38,14 @@ test('converts an HTML page to an EPUB without crashing', async () => {
     new MockLogger(),
   );
 
-  assert.ok(result, 'result should be defined');
-  assert.ok(result.epub instanceof Blob, 'result.epub should be a Blob');
+  assert.ok(result, "result should be defined");
+  assert.ok(result.epub instanceof Blob, "result.epub should be a Blob");
 });
 
-test('reports correct total step count and sequential progress through all sub-steps', async () => {
-  const url = 'https://example.com/article';
-  const loadImageFrom = async (_: string): Promise<Blob> => new Blob([], { type: 'image/png' });
+test("reports correct total step count and sequential progress through all sub-steps", async () => {
+  const url = "https://example.com/article";
+  const loadImageFrom = async (_: string): Promise<Blob> =>
+    new Blob([], { type: "image/png" });
   const reportedSteps: number[] = [];
   let reportedLength = 0;
   let currentStep = 0;
@@ -53,7 +55,9 @@ test('reports correct total step count and sequential progress through all sub-s
     Promise.resolve(HTML),
     loadImageFrom,
     () => reportedSteps.push(++currentStep),
-    (length) => { reportedLength = length; },
+    (length) => {
+      reportedLength = length;
+    },
     new MockLogger(),
   );
 
@@ -62,8 +66,8 @@ test('reports correct total step count and sequential progress through all sub-s
   assert.deepStrictEqual(reportedSteps, expectedSteps);
 });
 
-test('renders images in chapter HTML with src matching the stored asset path', async () => {
-  const url = 'https://example.com/article';
+test("renders images in chapter HTML with src matching the stored asset path", async () => {
+  const url = "https://example.com/article";
   const htmlWithImage = `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -80,18 +84,15 @@ test('renders images in chapter HTML with src matching the stored asset path', a
   </body>
 </html>`;
   const pngBytes = new Uint8Array([
-    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
-    0x00, 0x00, 0x00, 0x0d, 0x49, 0x48, 0x44, 0x52,
-    0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
-    0x08, 0x06, 0x00, 0x00, 0x00, 0x1f, 0x15, 0xc4,
-    0x89, 0x00, 0x00, 0x00, 0x0d, 0x49, 0x44, 0x41,
-    0x54, 0x78, 0x9c, 0x63, 0x00, 0x01, 0x00, 0x00,
-    0x05, 0x00, 0x01, 0x0d, 0x0a, 0x2d, 0xb4, 0x00,
-    0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae,
-    0x42, 0x60, 0x82,
+    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
+    0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
+    0x08, 0x06, 0x00, 0x00, 0x00, 0x1f, 0x15, 0xc4, 0x89, 0x00, 0x00, 0x00,
+    0x0d, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9c, 0x63, 0x00, 0x01, 0x00, 0x00,
+    0x05, 0x00, 0x01, 0x0d, 0x0a, 0x2d, 0xb4, 0x00, 0x00, 0x00, 0x00, 0x49,
+    0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82,
   ]);
   const loadImageFrom = async (_: string): Promise<Blob> =>
-    new Blob([pngBytes], { type: 'image/png' });
+    new Blob([pngBytes], { type: "image/png" });
 
   const result = await convertDocumentToEPub(
     url,
@@ -105,16 +106,26 @@ test('renders images in chapter HTML with src matching the stored asset path', a
   const epubBytes = new Uint8Array(await result.epub.arrayBuffer());
   const files = unzipSync(epubBytes);
   const chapterFileName = Object.keys(files).find(
-    (name) => /^OEBPS\/page-\d+\.html$/.test(name) && strFromU8(files[name]).includes('<img'),
+    (name) =>
+      /^OEBPS\/page-\d+\.html$/.test(name) &&
+      strFromU8(files[name]).includes("<img"),
   );
-  assert.ok(chapterFileName, 'expected a chapter HTML file containing an <img>');
+  assert.ok(
+    chapterFileName,
+    "expected a chapter HTML file containing an <img>",
+  );
   const chapterHtml = strFromU8(files[chapterFileName]);
   const srcMatch = /<img[^>]*\ssrc="([^"]+)"/.exec(chapterHtml);
-  assert.ok(srcMatch, `expected an <img> with a src attribute, got: ${chapterHtml}`);
+  assert.ok(
+    srcMatch,
+    `expected an <img> with a src attribute, got: ${chapterHtml}`,
+  );
   const imgSrc = srcMatch[1];
-  const assetFiles = Object.keys(files).filter((name) => name.startsWith('OEBPS/assets/'));
+  const assetFiles = Object.keys(files).filter((name) =>
+    name.startsWith("OEBPS/assets/"),
+  );
 
-  const resolvedAssetPath = `OEBPS/${imgSrc.replace(/^\.\//, '')}`;
+  const resolvedAssetPath = `OEBPS/${imgSrc.replace(/^\.\//, "")}`;
   assert.ok(
     assetFiles.includes(resolvedAssetPath),
     `chapter img src "${imgSrc}" should resolve to an existing EPUB asset; assets in EPUB: ${JSON.stringify(assetFiles)}`,

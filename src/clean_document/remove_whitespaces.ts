@@ -1,7 +1,6 @@
-import { Step } from '../step';
+import { Step } from "../step";
 
-const DESCRIPTION = 'Removing extra whitespaces';
-
+const DESCRIPTION = "Removing extra whitespaces";
 
 function removeExtraWhitespacesFromDocument(htmlDoc: HTMLDocument) {
   function filterNode() {
@@ -48,21 +47,22 @@ function mergeTextNodesElement(element: Element) {
 }
 
 function removeExtraWhitespaces(textNode: Text) {
-    if (!canRemoveWhitespaces(textNode)) {
-      return;
-    }
+  if (!canRemoveWhitespaces(textNode)) {
+    return;
+  }
 
-    textNode.nodeValue = textNode.nodeValue!.replace(/\r/g, '')
-                                           .replace(/\t/g, ' ')
-                                           .replace(/  +/g, ' ')
-                                           .replace(/\n[\n ]+/g, '\n')
-                                           .replace(/ +\n/g, '\n');
+  textNode.nodeValue = textNode
+    .nodeValue!.replace(/\r/g, "")
+    .replace(/\t/g, " ")
+    .replace(/  +/g, " ")
+    .replace(/\n[\n ]+/g, "\n")
+    .replace(/ +\n/g, "\n");
 }
 
 function canRemoveWhitespaces(textNode: Text) {
-    const parentTagName = textNode.parentElement!.tagName;
+  const parentTagName = textNode.parentElement!.tagName;
 
-    return ['PRE', 'CODE'].indexOf(parentTagName) == -1;
+  return ["PRE", "CODE"].indexOf(parentTagName) == -1;
 }
 
 export default new Step(DESCRIPTION, removeExtraWhitespacesFromDocument);

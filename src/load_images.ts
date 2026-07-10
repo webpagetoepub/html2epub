@@ -1,9 +1,9 @@
-import { Step } from './step';
-import { isEmptySvg } from './clean_document/remove_empty_svg';
+import { Step } from "./step";
+import { isEmptySvg } from "./clean_document/remove_empty_svg";
 
-import NO_IMAGE_DATA_URL from '../img/no-image.png';
+import NO_IMAGE_DATA_URL from "../img/no-image.png";
 
-const DESCRIPTION = 'Loading images';
+const DESCRIPTION = "Loading images";
 const parser = new DOMParser();
 
 interface LoadedImage {
@@ -12,37 +12,46 @@ interface LoadedImage {
   attributes: Record<string, string>;
 }
 
-
-export default function loadImagesStepFactory(loadImageFrom: (url: string) => Promise<Blob>) {
+export default function loadImagesStepFactory(
+  loadImageFrom: (url: string) => Promise<Blob>,
+) {
   async function loadImages(mainElement: Element, url: string) {
     const loadImage = memoizedLoadImage();
-    const replaceImageSrcByAbsoluteSrc = replaceImageSrcByPageURLAbsoluteSrc(url);
+    const replaceImageSrcByAbsoluteSrc =
+      replaceImageSrcByPageURLAbsoluteSrc(url);
 
-    const images = getAllImages(mainElement)
-        .filter(image => !image.getAttribute('src')!.startsWith('data:'));
+    const images = getAllImages(mainElement).filter(
+      (image) => !image.getAttribute("src")!.startsWith("data:"),
+    );
     images.forEach(replaceImageSrcByAbsoluteSrc);
-    const promises = images.map(image => loadImage(image).then(loadedImage => {
-      replaceImageByID(image, loadedImage);
+    const promises = images.map((image) =>
+      loadImage(image).then((loadedImage) => {
+        replaceImageByID(image, loadedImage);
 
-      return loadedImage;
-    }));
+        return loadedImage;
+      }),
+    );
 
     return Promise.allSettled(promises)
-        .then(settledPromises => settledPromises.filter(promise => promise.status === 'fulfilled').map((promise: PromiseFulfilledResult<LoadedImage>) => promise.value))
-        .then(results => Array.from(new Set(results)));
+      .then((settledPromises) =>
+        settledPromises
+          .filter((promise) => promise.status === "fulfilled")
+          .map((promise: PromiseFulfilledResult<LoadedImage>) => promise.value),
+      )
+      .then((results) => Array.from(new Set(results)));
   }
 
   function getAllImages(mainElement: Element) {
-    return Array.from(
-      mainElement.querySelectorAll('img[src]')
-    ).filter(element => element.getAttribute('src')!.trim());
+    return Array.from(mainElement.querySelectorAll("img[src]")).filter(
+      (element) => element.getAttribute("src")!.trim(),
+    );
   }
 
   function replaceImageSrcByPageURLAbsoluteSrc(pageURL: string) {
     return (image: Element) => {
-      const srcURL = image.getAttribute('src')!.trim();
+      const srcURL = image.getAttribute("src")!.trim();
       const srcAbsoluteURL = new URL(srcURL, pageURL).toString();
-      image.setAttribute('src', srcAbsoluteURL);
+      image.setAttribute("src", srcAbsoluteURL);
     };
   }
 
@@ -56,46 +65,51 @@ export default function loadImagesStepFactory(loadImageFrom: (url: string) => Pr
     const cache: Record<string, Promise<LoadedImage>> = {};
 
     return (image: Element) => {
-      const srcURL = image.getAttribute('src')!;
+      const srcURL = image.getAttribute("src")!;
       if (srcURL in cache) {
         return cache[srcURL];
       }
 
-      const promise = loadImageFrom(srcURL).then(async (blob) => {
-        if (!blob.type.startsWith('image/')) {
-          throw new Error();
-        }
-
-        if (blob.type === 'image/svg+xml') {
-          const svgContent = await blob.text();
-          const svg = parser.parseFromString(svgContent, 'text/xml');
-          if (isEmptySvg(svg)) {
+      const promise = loadImageFrom(srcURL)
+        .then(async (blob) => {
+          if (!blob.type.startsWith("image/")) {
             throw new Error();
           }
-        }
 
-        const id = generateHash(srcURL);
-        const attributes = Array.from(image.attributes).reduce((acc: Record<string, string>, attribute) => {
-          if (attribute.nodeValue) {
-            acc[attribute.nodeName] = attribute.nodeValue;
-          } else if (attribute.nodeName !== 'alt') {
-            acc[attribute.nodeName] = attribute.nodeName;
+          if (blob.type === "image/svg+xml") {
+            const svgContent = await blob.text();
+            const svg = parser.parseFromString(svgContent, "text/xml");
+            if (isEmptySvg(svg)) {
+              throw new Error();
+            }
           }
 
-          return acc;
-        }, {});
+          const id = generateHash(srcURL);
+          const attributes = Array.from(image.attributes).reduce(
+            (acc: Record<string, string>, attribute) => {
+              if (attribute.nodeValue) {
+                acc[attribute.nodeName] = attribute.nodeValue;
+              } else if (attribute.nodeName !== "alt") {
+                acc[attribute.nodeName] = attribute.nodeName;
+              }
 
-        return {id, blob, attributes};
-      }).catch(_ => {
-        return fetch(NO_IMAGE_DATA_URL)
-            .then(response => response.blob())
-            .then(blob => ({id: 'no-image', blob, attributes: {}}));
-      });
+              return acc;
+            },
+            {},
+          );
+
+          return { id, blob, attributes };
+        })
+        .catch((_) => {
+          return fetch(NO_IMAGE_DATA_URL)
+            .then((response) => response.blob())
+            .then((blob) => ({ id: "no-image", blob, attributes: {} }));
+        });
 
       cache[srcURL] = promise;
 
       return promise;
-    }
+    };
   }
 
   return new Step(DESCRIPTION, loadImages);
@@ -104,12 +118,12 @@ export default function loadImagesStepFactory(loadImageFrom: (url: string) => Pr
 function generateHash(str: string) {
   let hash = 0;
 
-  if (str.length === 0) return 'w' + hash.toString(36);
+  if (str.length === 0) return "w" + hash.toString(36);
 
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
     hash = (hash << 5) - hash + char;
   }
 
-  return 'w' + (hash >>> 0).toString(36);
+  return "w" + (hash >>> 0).toString(36);
 }

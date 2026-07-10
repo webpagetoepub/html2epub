@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Logger } from './logger';
+import { Logger } from "./logger";
 
 const TEMPLATE_ERROR_MESSAGE = '[ERROR] Error on "%s"';
 
@@ -33,7 +33,10 @@ export class SubProcessStep extends Step {
 
   override run(...args: any[]) {
     const [callbackStepCompleted, logger, ...params] = args;
-    return this.processFactory(...params).process(callbackStepCompleted, logger);
+    return this.processFactory(...params).process(
+      callbackStepCompleted,
+      logger,
+    );
   }
 
   getStepCount() {
@@ -42,11 +45,11 @@ export class SubProcessStep extends Step {
 }
 
 export class Process {
-  private stepsFlow: {step: Step, dependenciesIndex: number[]}[];
+  private stepsFlow: { step: Step; dependenciesIndex: number[] }[];
 
-  constructor(steps: {step: Step, dependencies?: Step[]}[]) {
+  constructor(steps: { step: Step; dependencies?: Step[] }[]) {
     this.stepsFlow = [];
-    steps.forEach(step => this.addStep(step.step, step.dependencies));
+    steps.forEach((step) => this.addStep(step.step, step.dependencies));
   }
 
   private addStep(step: Step, dependencies: Step[] = []) {
@@ -64,8 +67,12 @@ export class Process {
       }
 
       if (!found) {
-        const dependenciesNames = dependencies.map(dependency => dependency.name);
-        throw new Error(`Failed to create execution dependency. Step "${step.name}" depends on: ${dependenciesNames}.`);
+        const dependenciesNames = dependencies.map(
+          (dependency) => dependency.name,
+        );
+        throw new Error(
+          `Failed to create execution dependency. Step "${step.name}" depends on: ${dependenciesNames}.`,
+        );
       }
     }
 
@@ -73,7 +80,10 @@ export class Process {
   }
 
   getLength(): number {
-    return this.stepsFlow.reduce((sum, { step }) => sum + step.getStepCount(), 0);
+    return this.stepsFlow.reduce(
+      (sum, { step }) => sum + step.getStepCount(),
+      0,
+    );
   }
 
   async process(callbackStepCompleted: () => void, logger: Logger) {
@@ -81,7 +91,7 @@ export class Process {
     let result: any = null;
 
     for (const { step, dependenciesIndex } of this.stepsFlow) {
-      const params: any[] = dependenciesIndex.map(idx => results[idx]);
+      const params: any[] = dependenciesIndex.map((idx) => results[idx]);
 
       logger.log(step.name);
 
@@ -98,7 +108,7 @@ export class Process {
           results.push(result);
         }
       } catch (error) {
-        const message = TEMPLATE_ERROR_MESSAGE.replace('%s', step.name);
+        const message = TEMPLATE_ERROR_MESSAGE.replace("%s", step.name);
         logger.error(message);
         throw error;
       }

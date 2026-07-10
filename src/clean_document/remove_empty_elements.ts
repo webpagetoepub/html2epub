@@ -1,13 +1,50 @@
-import { Step } from '../step';
+import { Step } from "../step";
 
-const DESCRIPTION = 'Removing empty HTML elements';
+const DESCRIPTION = "Removing empty HTML elements";
 
 const TAGS_CAN_REMOVE = [
-  'SPAN', 'ABBR', 'CITE', 'EM', 'I', 'B', 'SUB', 'SUP', 'SMALL', 'STRONG',
-  'MARK', 'DEL', 'S', 'CODE', 'P', 'OL', 'UL', 'LI', 'DIV', 'PRE', 'BLOCKQUOTE',
-  'LABEL', 'ASIDE', 'ADDRESS', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'MAIN',
-  'SECTION', 'HEADER', 'ARTICLE', 'FOOTER', 'SUMMARY', 'DETAILS', 'TABLE',
-  'CAPTION', 'THEAD', 'TBODY', 'TFOOT',
+  "SPAN",
+  "ABBR",
+  "CITE",
+  "EM",
+  "I",
+  "B",
+  "SUB",
+  "SUP",
+  "SMALL",
+  "STRONG",
+  "MARK",
+  "DEL",
+  "S",
+  "CODE",
+  "P",
+  "OL",
+  "UL",
+  "LI",
+  "DIV",
+  "PRE",
+  "BLOCKQUOTE",
+  "LABEL",
+  "ASIDE",
+  "ADDRESS",
+  "H1",
+  "H2",
+  "H3",
+  "H4",
+  "H5",
+  "H6",
+  "MAIN",
+  "SECTION",
+  "HEADER",
+  "ARTICLE",
+  "FOOTER",
+  "SUMMARY",
+  "DETAILS",
+  "TABLE",
+  "CAPTION",
+  "THEAD",
+  "TBODY",
+  "TFOOT",
 ];
 
 function removeEmptyElements(htmlDoc: HTMLDocument) {
@@ -19,7 +56,7 @@ function removeEmptyElements(htmlDoc: HTMLDocument) {
   const iterator = htmlDoc.createNodeIterator(
     htmlDoc.documentElement,
     NodeFilter.SHOW_ELEMENT,
-    filterNode
+    filterNode,
   );
   let node: HTMLElement;
 
@@ -43,8 +80,7 @@ function removeIfEmptyElement(element: HTMLElement) {
 
 function canRemoveElement(element: HTMLElement) {
   return (
-    (TAGS_CAN_REMOVE.indexOf(element.tagName) !== -1)
-    && (!element.innerHTML.trim())
+    TAGS_CAN_REMOVE.indexOf(element.tagName) !== -1 && !element.innerHTML.trim()
   );
 }
 
