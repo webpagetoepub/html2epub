@@ -55,6 +55,25 @@ test('returns date from meta[name="article:published_time"]', () => {
   assert.equal(result.date.toISOString().startsWith("2022-03-10"), true);
 });
 
+test("falls back to a lower-priority source when a date is unparseable", () => {
+  const doc = makeDoc(
+    '<meta itemprop="datePublished" content="not-a-date">' +
+      '<time itemprop="startDate" datetime="2023-06-01">June 1</time>',
+  );
+
+  const result = getMetadata.run(doc, "https://example.com");
+
+  assert.equal(result.date.toISOString().startsWith("2023-06-01"), true);
+});
+
+test("returns a valid date when every source is unparseable", () => {
+  const doc = makeDoc('<meta itemprop="datePublished" content="not-a-date">');
+
+  const result = getMetadata.run(doc, "https://example.com");
+
+  assert.equal(isNaN(result.date.getTime()), false);
+});
+
 test('returns author from meta[name="author"]', () => {
   const doc = makeDoc('<meta name="author" content="Jane Doe">');
 

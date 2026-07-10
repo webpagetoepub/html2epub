@@ -28,29 +28,13 @@ function getTitle(htmlDoc: HTMLDocument, url: string) {
   }
 }
 
-function getDate(htmlDoc: HTMLDocument) {
-  const datePublishedStructuredMetadata = htmlDoc.querySelector(
-    'meta[itemprop="datePublished"][content]',
-  );
-  if (datePublishedStructuredMetadata) {
-    try {
-      return new Date(datePublishedStructuredMetadata.getAttribute("content")!);
-    } catch (_) {
-      // continue regardless of error
-    }
-  }
-
-  const startDate = htmlDoc.querySelector(
-    'time[itemprop="startDate"][datetime]',
-  );
-  if (startDate) {
-    try {
-      return new Date(startDate.getAttribute("datetime")!);
-    } catch (_) {
-      // continue regardless of error
-    }
-  }
-
+function getDate(htmlDoc: HTMLDocument): Date {
+  const datePublished = htmlDoc
+    .querySelector('meta[itemprop="datePublished"][content]')
+    ?.getAttribute("content");
+  const startDate = htmlDoc
+    .querySelector('time[itemprop="startDate"][datetime]')
+    ?.getAttribute("datetime");
   const contentDate = getContentFromMetatags(htmlDoc, [
     "article:published_time",
     "article:modified_time",
@@ -59,15 +43,25 @@ function getDate(htmlDoc: HTMLDocument) {
     "og:article:modified_time",
     "og:book:release_date",
   ]);
-  if (contentDate) {
-    try {
-      return new Date(contentDate);
-    } catch (_) {
-      // continue regardless of error
-    }
+
+  // new Date(invalid) yields an Invalid Date instead of throwing, so guard
+  // each candidate with parseValidDate and fall back to the current date.
+  return (
+    parseValidDate(datePublished) ??
+    parseValidDate(startDate) ??
+    parseValidDate(contentDate) ??
+    new Date()
+  );
+}
+
+function parseValidDate(value: string | null | undefined): Date | null {
+  if (!value) {
+    return null;
   }
 
-  return new Date();
+  const date = new Date(value);
+
+  return isNaN(date.getTime()) ? null : date;
 }
 
 function getAuthor(htmlDoc: HTMLDocument) {
