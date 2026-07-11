@@ -1,23 +1,18 @@
 import { Step } from "../step";
+import { collectNodes } from "./collect_nodes";
 
 const DESCRIPTION = "Removing extra whitespaces";
 
 function removeExtraWhitespacesFromDocument(htmlDoc: HTMLDocument) {
-  function filterNode() {
-    return NodeFilter.FILTER_ACCEPT;
-  }
-
   mergeTextNodesElement(htmlDoc.documentElement);
 
-  const iterator = htmlDoc.createNodeIterator(
+  const textNodes = collectNodes<Text>(
     htmlDoc.documentElement,
     NodeFilter.SHOW_TEXT,
-    filterNode,
   );
-  let node;
 
-  while ((node = iterator.nextNode()) !== null) {
-    removeExtraWhitespaces(node as Text);
+  for (const textNode of textNodes) {
+    removeExtraWhitespaces(textNode);
   }
 }
 

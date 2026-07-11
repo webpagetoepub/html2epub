@@ -1,4 +1,5 @@
 import { Step } from "../step";
+import { collectNodes } from "./collect_nodes";
 
 const DESCRIPTION = "Removing empty HTML elements";
 
@@ -48,21 +49,10 @@ const TAGS_CAN_REMOVE = [
 ];
 
 function removeEmptyElements(htmlDoc: HTMLDocument) {
-  function filterNode() {
-    return NodeFilter.FILTER_ACCEPT;
-  }
-
-  const elements = [];
-  const iterator = htmlDoc.createNodeIterator(
+  const elements = collectNodes<HTMLElement>(
     htmlDoc.documentElement,
     NodeFilter.SHOW_ELEMENT,
-    filterNode,
   );
-  let node: HTMLElement;
-
-  while ((node = iterator.nextNode() as HTMLElement) !== null) {
-    elements.push(node);
-  }
 
   for (const element of elements) {
     removeIfEmptyElement(element);
