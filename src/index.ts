@@ -20,9 +20,9 @@ export default async function convertDocumentToEPub(
 ) {
   const urlStep = new Step("URL recover step", () => url);
   const htmlContentStep = new Step(`Loading "${url}"`, () => htmlContent);
-  const convertSplitedContentInHTMLContentStep = new Step(
-    "Convert splited content in HTML content",
-    convertSplitedContentInHTMLContent,
+  const convertSplittedContentInHTMLContentStep = new Step(
+    "Convert splitted content in HTML content",
+    convertSplittedContentInHTMLContent,
   );
   const loadImages = loadImagesStepFactory(loadImageFrom);
   const createEPUB = createEpubStepFactory(logger);
@@ -42,13 +42,13 @@ export default async function convertDocumentToEPub(
     },
     { step: fixLinks, dependencies: [splitContentByHeadings, urlStep] },
     {
-      step: convertSplitedContentInHTMLContentStep,
+      step: convertSplittedContentInHTMLContentStep,
       dependencies: [splitContentByHeadings],
     },
     {
       step: createEPUB,
       dependencies: [
-        convertSplitedContentInHTMLContentStep,
+        convertSplittedContentInHTMLContentStep,
         getMetadata,
         loadImages,
       ],
@@ -60,12 +60,12 @@ export default async function convertDocumentToEPub(
   return await convertDocumentProcess.process(callbackStepCompleted, logger);
 }
 
-function convertSplitedContentInHTMLContent(
-  splitedContents: SplittedElement[],
+function convertSplittedContentInHTMLContent(
+  splittedContents: SplittedElement[],
 ) {
-  return splitedContents.map((splitedContent) => ({
-    title: splitedContent.title,
-    content: getHtmlContent(splitedContent.element),
+  return splittedContents.map((splittedContent) => ({
+    title: splittedContent.title,
+    content: getHtmlContent(splittedContent.element),
   }));
 }
 

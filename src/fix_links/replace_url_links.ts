@@ -2,9 +2,9 @@ import { Step } from "../step";
 
 const DESCRIPTION = "Replace URL links";
 
-function fixLinks(splitedContents: Element[], originUrl: string) {
-  const linksElements = splitedContents.flatMap((splitedContent) =>
-    Array.from(splitedContent.querySelectorAll("a[href]")),
+function fixLinks(splittedContents: Element[], originUrl: string) {
+  const linksElements = splittedContents.flatMap((splittedContent) =>
+    Array.from(splittedContent.querySelectorAll("a[href]")),
   );
 
   for (const linkElement of linksElements) {
@@ -15,7 +15,7 @@ function fixLinks(splitedContents: Element[], originUrl: string) {
     linkElement.setAttribute("href", newUrl);
   }
 
-  return splitedContents;
+  return splittedContents;
 }
 
 function convertUrlToAbsolute(href: string, originUrl: string) {

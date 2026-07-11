@@ -2,10 +2,10 @@ import { Step } from "../step";
 
 const DESCRIPTION = "Set external links to open in a new tab";
 
-function setExternalLinksBlank(splitedContents: Element[]) {
-  const linksElements = splitedContents.flatMap((splitedContent) =>
+function setExternalLinksBlank(splittedContents: Element[]) {
+  const linksElements = splittedContents.flatMap((splittedContent) =>
     Array.from(
-      splitedContent.querySelectorAll(
+      splittedContent.querySelectorAll(
         'a[href^="http://"], a[href^="https://"]',
       ),
     ),
@@ -15,7 +15,7 @@ function setExternalLinksBlank(splitedContents: Element[]) {
     linkElement.setAttribute("target", "_blank");
   }
 
-  return splitedContents;
+  return splittedContents;
 }
 
 export default new Step(DESCRIPTION, setExternalLinksBlank);

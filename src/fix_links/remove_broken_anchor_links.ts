@@ -3,16 +3,16 @@ import replaceElementWithStructure from "../replace_element";
 
 const DESCRIPTION = "Remove broken anchor links";
 
-function removeBrokenAnchorLinks(splitedContents: Element[]) {
-  for (let i = 0, length = splitedContents.length; i < length; i++) {
-    const splitedContent = splitedContents[i];
+function removeBrokenAnchorLinks(splittedContents: Element[]) {
+  for (let i = 0, length = splittedContents.length; i < length; i++) {
+    const splittedContent = splittedContents[i];
     const anchorLinkElements = Array.from(
-      splitedContent.querySelectorAll('a[href^="#"]'),
+      splittedContent.querySelectorAll('a[href^="#"]'),
     );
 
     for (const anchorLinkElement of anchorLinkElements) {
       const anchor = anchorLinkElement.getAttribute("href")!.substring(1);
-      const indexContent = indexOfAnchor(splitedContents, anchor);
+      const indexContent = indexOfAnchor(splittedContents, anchor);
 
       if (indexContent === -1) {
         replaceLinkBySpan(anchorLinkElement);
@@ -22,13 +22,13 @@ function removeBrokenAnchorLinks(splitedContents: Element[]) {
     }
   }
 
-  return splitedContents;
+  return splittedContents;
 }
 
-function indexOfAnchor(splitedContents: Element[], anchor: string) {
-  for (let i = 0, length = splitedContents.length; i < length; i++) {
-    const splitedContent = splitedContents[i];
-    const anchorElement = splitedContent.querySelector(
+function indexOfAnchor(splittedContents: Element[], anchor: string) {
+  for (let i = 0, length = splittedContents.length; i < length; i++) {
+    const splittedContent = splittedContents[i];
+    const anchorElement = splittedContent.querySelector(
       `[id="${anchor}"],a[name="${anchor}"]`,
     );
 

@@ -7,20 +7,20 @@ import { SplittedElement } from "../split_main_content";
 const DESCRIPTION = "Fix links";
 
 function buildFixLinksProcess(
-  splitedContents: SplittedElement[],
+  splittedContents: SplittedElement[],
   originUrl: string,
 ): Process {
-  const splitedContentsStep = new Step("Splitted elements step", () =>
-    splitedContents.map((splitedContent) => splitedContent.element),
+  const splittedContentsStep = new Step("Splitted elements step", () =>
+    splittedContents.map((splittedContent) => splittedContent.element),
   );
   const originUrlStep = new Step("Origin URL step", () => originUrl);
 
   return new Process([
-    { step: splitedContentsStep },
+    { step: splittedContentsStep },
     { step: originUrlStep },
     {
       step: replaceUrlLinks,
-      dependencies: [splitedContentsStep, originUrlStep],
+      dependencies: [splittedContentsStep, originUrlStep],
     },
     { step: setExternalLinksBlank, dependencies: [replaceUrlLinks] },
     { step: removeBrokenAnchorLinks, dependencies: [replaceUrlLinks] },
