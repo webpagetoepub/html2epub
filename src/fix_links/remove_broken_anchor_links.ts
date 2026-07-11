@@ -1,16 +1,18 @@
-import { Step } from '../step';
-import replaceElementWithStructure from '../replace_element';
+import { Step } from "../step";
+import replaceElementWithStructure from "../replace_element";
 
-const DESCRIPTION = 'Remove broken anchor links';
+const DESCRIPTION = "Remove broken anchor links";
 
-function removeBrokenAnchorLinks(splitedContents: Element[]) {
-  for (let i = 0, length = splitedContents.length; i < length; i++) {
-    const splitedContent = splitedContents[i];
-    const anchorLinkElements = Array.from(splitedContent.querySelectorAll('a[href^="#"]'));
+function removeBrokenAnchorLinks(splittedContents: Element[]) {
+  for (let i = 0, length = splittedContents.length; i < length; i++) {
+    const splittedContent = splittedContents[i];
+    const anchorLinkElements = Array.from(
+      splittedContent.querySelectorAll('a[href^="#"]'),
+    );
 
     for (const anchorLinkElement of anchorLinkElements) {
-      const anchor = anchorLinkElement.getAttribute('href')!.substring(1);
-      const indexContent = indexOfAnchor(splitedContents, anchor);
+      const anchor = anchorLinkElement.getAttribute("href")!.substring(1);
+      const indexContent = indexOfAnchor(splittedContents, anchor);
 
       if (indexContent === -1) {
         replaceLinkBySpan(anchorLinkElement);
@@ -20,13 +22,15 @@ function removeBrokenAnchorLinks(splitedContents: Element[]) {
     }
   }
 
-  return splitedContents;
+  return splittedContents;
 }
 
-function indexOfAnchor(splitedContents: Element[], anchor: string) {
-  for (let i = 0, length = splitedContents.length; i < length; i++) {
-    const splitedContent = splitedContents[i];
-    const anchorElement = splitedContent.querySelector(`[id="${anchor}"],a[name="${anchor}"]`);
+function indexOfAnchor(splittedContents: Element[], anchor: string) {
+  for (let i = 0, length = splittedContents.length; i < length; i++) {
+    const splittedContent = splittedContents[i];
+    const anchorElement = splittedContent.querySelector(
+      `[id="${anchor}"],a[name="${anchor}"]`,
+    );
 
     if (anchorElement !== null) {
       return i;
@@ -37,16 +41,16 @@ function indexOfAnchor(splitedContents: Element[], anchor: string) {
 }
 
 function replaceLinkBySpan(anchorLinkElement: Element) {
-  const span = document.createElement('span');
+  const span = document.createElement("span");
   replaceElementWithStructure(anchorLinkElement, span);
-  span.removeAttribute('href');
+  span.removeAttribute("href");
 }
 
 function fixAnchorLink(anchorLinkElement: Element, indexContent: number) {
-  const anchor = anchorLinkElement.getAttribute('href');
+  const anchor = anchorLinkElement.getAttribute("href");
   const newHref = `page-${indexContent}.html${anchor}`;
 
-  anchorLinkElement.setAttribute('href', newHref);
+  anchorLinkElement.setAttribute("href", newHref);
 }
 
 export default new Step(DESCRIPTION, removeBrokenAnchorLinks);

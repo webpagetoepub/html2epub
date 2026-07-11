@@ -1,13 +1,11 @@
-import { Step } from './step';
+import { Step } from "./step";
 
-
-const DESCRIPTION = 'Converting downloaded text to DOM';
-
+const DESCRIPTION = "Converting downloaded text to DOM";
 
 function convertTextToDOM(content: string) {
   const parser = new DOMParser();
 
-  return parser.parseFromString(content, 'text/html');
+  return parser.parseFromString(content, "text/html");
 }
 
 export default new Step(DESCRIPTION, convertTextToDOM);

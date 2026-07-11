@@ -1,7 +1,6 @@
-import { Step } from '../step';
+import { Step } from "../step";
 
-const DESCRIPTION = 'Removing HTML hidden elements';
-
+const DESCRIPTION = "Removing HTML hidden elements";
 
 function removeHiddenElements(htmlDoc: HTMLDocument) {
   const hiddenElements = htmlDoc.querySelectorAll(`[hidden]`);

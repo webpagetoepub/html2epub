@@ -1,13 +1,12 @@
-import { Step } from '../step';
+import { Step } from "../step";
 
-const DESCRIPTION = 'Removing custom attributes';
-
+const DESCRIPTION = "Removing custom attributes";
 
 function removeDataAttributes(htmlDoc: HTMLDocument) {
   function removeDataAttributesElement(element: Element) {
     const attributes = [];
     for (const attribute of Array.from(element.attributes)) {
-      if (attribute.name.indexOf('data-') === 0) {
+      if (attribute.name.indexOf("data-") === 0) {
         attributes.push(attribute);
       }
     }
@@ -20,7 +19,10 @@ function removeDataAttributes(htmlDoc: HTMLDocument) {
   visitAllElements(htmlDoc, removeDataAttributesElement);
 }
 
-function visitAllElements(htmlDoc: HTMLDocument, callback: (element: Element) => void) {
+function visitAllElements(
+  htmlDoc: HTMLDocument,
+  callback: (element: Element) => void,
+) {
   visitElement(htmlDoc.documentElement, callback);
 }
 

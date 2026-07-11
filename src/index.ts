@@ -1,15 +1,14 @@
-import convertTextToDOM from './convert_text_dom';
-import getMetadata from './get_metadata';
-import cleanDocument from './clean_document';
-import replaceElements from './replace_elements';
-import getMainContent from './get_main_content';
-import splitContentByHeadings, { SplittedElement } from './split_main_content';
-import loadImagesStepFactory from './load_images';
-import createEpubStepFactory from './create_epub';
-import fixLinks from './fix_links';
-import { Step, Process } from './step';
-import { Logger } from './logger';
-
+import convertTextToDOM from "./convert_text_dom";
+import getMetadata from "./get_metadata";
+import cleanDocument from "./clean_document";
+import replaceElements from "./replace_elements";
+import getMainContent from "./get_main_content";
+import splitContentByHeadings, { SplittedElement } from "./split_main_content";
+import loadImagesStepFactory from "./load_images";
+import createEpubStepFactory from "./create_epub";
+import fixLinks from "./fix_links";
+import { Step, Process } from "./step";
+import { Logger } from "./logger";
 
 export default async function convertDocumentToEPub(
   url: string,
@@ -19,28 +18,41 @@ export default async function convertDocumentToEPub(
   callbackLength: (length: number) => void,
   logger: Logger,
 ) {
-  const urlStep = new Step('URL recover step', () => url);
+  const urlStep = new Step("URL recover step", () => url);
   const htmlContentStep = new Step(`Loading "${url}"`, () => htmlContent);
-  const convertSplitedContentInHTMLContentStep = new Step(
-    'Convert splited content in HTML content',
-    convertSplitedContentInHTMLContent,
+  const convertSplittedContentInHTMLContentStep = new Step(
+    "Convert splitted content in HTML content",
+    convertSplittedContentInHTMLContent,
   );
   const loadImages = loadImagesStepFactory(loadImageFrom);
   const createEPUB = createEpubStepFactory(logger);
 
   const convertDocumentProcess = new Process([
-    {step: urlStep},
-    {step: htmlContentStep},
-    {step: convertTextToDOM, dependencies: [htmlContentStep]},
-    {step: getMetadata, dependencies: [convertTextToDOM, urlStep]},
-    {step: cleanDocument, dependencies: [convertTextToDOM]},
-    {step: replaceElements, dependencies: [convertTextToDOM]},
-    {step: getMainContent, dependencies: [convertTextToDOM]},
-    {step: loadImages, dependencies: [getMainContent, urlStep]},
-    {step: splitContentByHeadings, dependencies: [getMainContent, getMetadata]},
-    {step: fixLinks, dependencies: [splitContentByHeadings, urlStep]},
-    {step: convertSplitedContentInHTMLContentStep, dependencies: [splitContentByHeadings]},
-    {step: createEPUB, dependencies: [convertSplitedContentInHTMLContentStep, getMetadata, loadImages]},
+    { step: urlStep },
+    { step: htmlContentStep },
+    { step: convertTextToDOM, dependencies: [htmlContentStep] },
+    { step: getMetadata, dependencies: [convertTextToDOM, urlStep] },
+    { step: cleanDocument, dependencies: [convertTextToDOM] },
+    { step: replaceElements, dependencies: [convertTextToDOM] },
+    { step: getMainContent, dependencies: [convertTextToDOM] },
+    { step: loadImages, dependencies: [getMainContent, urlStep] },
+    {
+      step: splitContentByHeadings,
+      dependencies: [getMainContent, getMetadata],
+    },
+    { step: fixLinks, dependencies: [splitContentByHeadings, urlStep] },
+    {
+      step: convertSplittedContentInHTMLContentStep,
+      dependencies: [splitContentByHeadings],
+    },
+    {
+      step: createEPUB,
+      dependencies: [
+        convertSplittedContentInHTMLContentStep,
+        getMetadata,
+        loadImages,
+      ],
+    },
   ]);
 
   callbackLength(convertDocumentProcess.getLength());
@@ -48,12 +60,12 @@ export default async function convertDocumentToEPub(
   return await convertDocumentProcess.process(callbackStepCompleted, logger);
 }
 
-function convertSplitedContentInHTMLContent(
-  splitedContents: SplittedElement[],
+function convertSplittedContentInHTMLContent(
+  splittedContents: SplittedElement[],
 ) {
-  return splitedContents.map(splitedContent => ({
-    title: splitedContent.title,
-    content: getHtmlContent(splitedContent.element),
+  return splittedContents.map((splittedContent) => ({
+    title: splittedContent.title,
+    content: getHtmlContent(splittedContent.element),
   }));
 }
 
@@ -62,14 +74,15 @@ function getHtmlContent(element: Element) {
   const domParser = new DOMParser();
 
   const htmlCode = xmlSerializer.serializeToString(element);
-  const xhtmlElement = domParser.parseFromString(htmlCode, 'text/html');
+  const xhtmlElement = domParser.parseFromString(htmlCode, "text/html");
   const xhtmlCode = xmlSerializer.serializeToString(xhtmlElement);
-  const xhtmlDocument = domParser.parseFromString(xhtmlCode, 'text/html');
+  const xhtmlDocument = domParser.parseFromString(xhtmlCode, "text/html");
 
   return replaceCommentsImagesByImages(xhtmlDocument.body.innerHTML);
 }
 
 function replaceCommentsImagesByImages(content: string) {
-  return content.replace(/<!--\s*<%= image\[/g, '<%= image[')
-                .replace(/] %>\s*-->/g, '] %>');
+  return content
+    .replace(/<!--\s*<%= image\[/g, "<%= image[")
+    .replace(/] %>\s*-->/g, "] %>");
 }
