@@ -24,6 +24,40 @@ class MockLogger {
   error() {}
 }
 
+// Builds a document whose <main> has several h2 sections, each carrying a
+// paragraph of `paragraphLength` characters. Used to exercise how chapters are
+// packed into jEpub pages by their combined content size.
+function buildMultiChapterHtml(
+  chapterCount: number,
+  paragraphLength: number,
+): string {
+  const sections = Array.from({ length: chapterCount }, (_, i) => {
+    const paragraph = "a".repeat(paragraphLength);
+    return `<h2>Chapter ${i + 1}</h2><p>${paragraph}</p>`;
+  }).join("");
+
+  return `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Multi Chapter Article</title>
+    <meta name="author" content="Test Author" />
+  </head>
+  <body>
+    <main>${sections}</main>
+  </body>
+</html>`;
+}
+
+async function pageFileNames(epub: Blob): Promise<string[]> {
+  const files = unzipSync(new Uint8Array(await epub.arrayBuffer()));
+  return Object.keys(files).filter((name) =>
+    /^OEBPS\/page-\d+\.html$/.test(name),
+  );
+}
+
+const NO_IMAGES = async (_: string): Promise<Blob> =>
+  new Blob([], { type: "image/png" });
+
 test("converts an HTML page to an EPUB without crashing", async () => {
   const url = "https://example.com/article";
   const loadImageFrom = async (_: string): Promise<Blob> =>
@@ -64,6 +98,47 @@ test("reports correct total step count and sequential progress through all sub-s
   const expectedSteps = Array.from({ length: STEPS_LENGTH }, (_, i) => i + 1);
   assert.strictEqual(reportedLength, STEPS_LENGTH);
   assert.deepStrictEqual(reportedSteps, expectedSteps);
+});
+
+test("merges several small chapters into a single EPUB page", async () => {
+  const html = buildMultiChapterHtml(4, 200);
+
+  const result = await convertDocumentToEPub(
+    "https://example.com/article",
+    Promise.resolve(html),
+    NO_IMAGES,
+    () => {},
+    () => {},
+    new MockLogger(),
+  );
+
+  const pages = await pageFileNames(result.epub);
+  assert.strictEqual(
+    pages.length,
+    1,
+    `chapters under 200KB should share one page, got: ${JSON.stringify(pages)}`,
+  );
+});
+
+test("splits chapters into multiple pages when combined content exceeds 200KB", async () => {
+  // Three ~150KB chapters: no two fit together under the 200KB budget, so each
+  // lands on its own page.
+  const html = buildMultiChapterHtml(3, 150 * 1024);
+
+  const result = await convertDocumentToEPub(
+    "https://example.com/article",
+    Promise.resolve(html),
+    NO_IMAGES,
+    () => {},
+    () => {},
+    new MockLogger(),
+  );
+
+  const pages = await pageFileNames(result.epub);
+  assert.ok(
+    pages.length >= 2,
+    `chapters exceeding 200KB should split across pages, got: ${JSON.stringify(pages)}`,
+  );
 });
 
 test("renders images in chapter HTML with src matching the stored asset path", async () => {
