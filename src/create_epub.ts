@@ -22,6 +22,7 @@ export interface Metadata {
   uuid: string;
   description: string;
   tags: string[];
+  language: string;
 }
 
 async function createEPUB(
@@ -32,7 +33,7 @@ async function createEPUB(
 ): Promise<{ title: string; epub: Blob }> {
   const jepub = new jEpub();
 
-  jepub.init({ i18n: "en", ...metadata });
+  jepub.init({ ...metadata, i18n: metadata.language });
   jepub.uuid(metadata.uuid);
   jepub.date(metadata.date);
 

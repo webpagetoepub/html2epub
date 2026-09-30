@@ -76,6 +76,23 @@ test("converts an HTML page to an EPUB without crashing", async () => {
   assert.ok(result.epub instanceof Blob, "result.epub should be a Blob");
 });
 
+// jEpub throws "Unknown Language" for codes outside its list, so an
+// unsupported page language must fall back instead of failing the conversion.
+test("converts a page whose language jEpub does not support", async () => {
+  const html = HTML.replace('<html lang="en">', '<html lang="unknown">');
+
+  const result = await convertDocumentToEPub(
+    "https://example.com/article",
+    Promise.resolve(html),
+    NO_IMAGES,
+    () => {},
+    () => {},
+    new MockLogger(),
+  );
+
+  assert.ok(result.epub instanceof Blob, "result.epub should be a Blob");
+});
+
 test("reports correct total step count and sequential progress through all sub-steps", async () => {
   const url = "https://example.com/article";
   const loadImageFrom = async (_: string): Promise<Blob> =>
