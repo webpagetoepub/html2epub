@@ -6,6 +6,7 @@ import removeDataAttributes from "./remove_data_attributes";
 import removeAttributes from "./remove_attributes";
 import removeExtraWhitespacesFromDocument from "./remove_whitespaces";
 import removeEmptySVGs from "./remove_empty_svg";
+import removeImagesWithoutSrc from "./remove_images_without_src";
 import { Step, SubProcessStep, Process } from "../step";
 
 const DESCRIPTION = "Cleaning HTML document";
@@ -18,11 +19,12 @@ function buildCleanDocumentProcess(htmlDoc: HTMLDocument): Process {
     { step: removeElementsFromDocument, dependencies: [firstStep] },
     { step: removeHiddenElements, dependencies: [firstStep] },
     { step: removeAllComments, dependencies: [firstStep] },
-    { step: removeEmptyElements, dependencies: [firstStep] },
+    { step: removeImagesWithoutSrc, dependencies: [firstStep] },
     { step: removeDataAttributes, dependencies: [firstStep] },
     { step: removeAttributes, dependencies: [firstStep] },
     { step: removeExtraWhitespacesFromDocument, dependencies: [firstStep] },
     { step: removeEmptySVGs, dependencies: [firstStep] },
+    { step: removeEmptyElements, dependencies: [firstStep] },
   ]);
 }
 
