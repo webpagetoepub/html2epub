@@ -1,24 +1,13 @@
-import { Step } from '../step';
+import { Step } from "../step";
+import { collectNodes } from "./collect_nodes";
 
-const DESCRIPTION = 'Removing all HTML comments';
-
+const DESCRIPTION = "Removing all HTML comments";
 
 function removeAllComments(htmlDoc: HTMLDocument) {
-  function filterNode() {
-    return NodeFilter.FILTER_ACCEPT;
-  }
-
-  const comments = [];
-  const iterator = htmlDoc.createNodeIterator(
+  const comments = collectNodes<Comment>(
     htmlDoc.documentElement,
     NodeFilter.SHOW_COMMENT,
-    filterNode
   );
-  let node: Comment;
-
-  while ((node = iterator.nextNode() as Comment) !== null) {
-    comments.push(node);
-  }
 
   for (const comment of comments) {
     comment.remove();

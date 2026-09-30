@@ -1,10 +1,9 @@
-import { Step } from './step';
+import { Step } from "./step";
 
-const DESCRIPTION = 'Choosing the main content from HTML document';
-
+const DESCRIPTION = "Choosing the main content from HTML document";
 
 function getContent(htmlDoc: HTMLDocument) {
-  const mainArticleElement = htmlDoc.querySelectorAll('main article');
+  const mainArticleElement = htmlDoc.querySelectorAll("main article");
   if (mainArticleElement.length === 1) {
     return mainArticleElement[0];
   }
@@ -14,7 +13,7 @@ function getContent(htmlDoc: HTMLDocument) {
     return mainElement;
   }
 
-  const articleElement = htmlDoc.querySelector('article');
+  const articleElement = htmlDoc.querySelector("article");
   if (articleElement) {
     return articleElement;
   }

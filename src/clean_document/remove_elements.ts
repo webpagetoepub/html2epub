@@ -1,21 +1,55 @@
-import { Step } from '../step';
+import { Step } from "../step";
 
-const DESCRIPTION = 'Removing unused HTML elements';
+const DESCRIPTION = "Removing unused HTML elements";
 
 const EMBEDDED_ELEMENTS_TO_REMOVE = [
-  'map', 'area', 'embed', 'object', 'video', 'audio', 'iframe', 'canvas',
-  'applet', 'frameset', 'track', 'portal', 'source', 'frame', 'param', 'shadow',
+  "map",
+  "area",
+  "embed",
+  "object",
+  "video",
+  "audio",
+  "iframe",
+  "canvas",
+  "applet",
+  "frameset",
+  "track",
+  "portal",
+  "source",
+  "frame",
+  "param",
+  "shadow",
 ];
 const FORM_ELEMENTS_TO_REMOVE = [
-  'button', 'input', 'textarea', 'select', 'output', 'datalist', 'keygen',
-  'optgroup', 'option',
+  "button",
+  "input",
+  "textarea",
+  "select",
+  "output",
+  "datalist",
+  "keygen",
+  "optgroup",
+  "option",
 ];
 const METADATA_SCRIPT_ELEMENTS_TO_REMOVE = [
-  'base', 'script', 'meta', 'link', 'style', 'template', 'slot',
-  'basefont', 'font',
+  "base",
+  "script",
+  "meta",
+  "link",
+  "style",
+  "template",
+  "slot",
+  "basefont",
+  "font",
 ];
-const INTERACTIVE_ELEMENTS_TO_REMOVE = ['menu', 'command', 'nav', 'menuitem'];
-const NOT_SUPPORTED_ELEMENTS_TO_REMOVE = ['math', 'svg', 'col', 'colgroup', 'dialog'];
+const INTERACTIVE_ELEMENTS_TO_REMOVE = ["menu", "command", "nav", "menuitem"];
+const NOT_SUPPORTED_ELEMENTS_TO_REMOVE = [
+  "math",
+  "svg",
+  "col",
+  "colgroup",
+  "dialog",
+];
 
 const ELEMENTS_TO_REMOVE = [
   ...EMBEDDED_ELEMENTS_TO_REMOVE,

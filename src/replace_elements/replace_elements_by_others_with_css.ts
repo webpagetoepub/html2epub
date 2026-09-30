@@ -1,31 +1,43 @@
-import { Step } from '../step';
-import replaceElementWithStructure from '../replace_element';
+import { Step } from "../step";
+import replaceElementWithStructure from "../replace_element";
 
 type MyCSSProperties = Record<string, string>;
 
-type MyMap = Record<string, {tag: string, properties: MyCSSProperties}>;
+type MyMap = Record<string, { tag: string; properties: MyCSSProperties }>;
 
 const SIMPLE_TAGS: MyMap = {
-  'mark': {
-    tag: 'span',
-    properties: {'background-color': '#ff0'},
+  mark: {
+    tag: "span",
+    properties: { "background-color": "#ff0" },
   },
-  'u': {
-    tag: 'span',
+  u: {
+    tag: "span",
     properties: {
-      'text-decoration-color': 'red',
-      'text-decoration-style': 'wavy',
-      'text-decoration-line': 'underline',
-      'text-decoration': 'red wavy underline',
+      "text-decoration-color": "red",
+      "text-decoration-style": "wavy",
+      "text-decoration-line": "underline",
+      "text-decoration": "red wavy underline",
     },
   },
-  'center': {
-    tag: 'div',
-    properties: {'text-align': 'center'},
-  }
+  center: {
+    tag: "div",
+    properties: { "text-align": "center" },
+  },
+  table: {
+    tag: "table",
+    properties: { "border-collapse": "collapse" },
+  },
+  th: {
+    tag: "th",
+    properties: { border: "1px solid black" },
+  },
+  td: {
+    tag: "td",
+    properties: { border: "1px solid black" },
+  },
 };
 
-const DESCRIPTION = 'Replace elements by others with CSS style';
+const DESCRIPTION = "Replace elements by others with CSS style";
 
 function replaceElementsByOtherWithCSS(htmlDoc: HTMLDocument) {
   for (const fromTag in SIMPLE_TAGS) {
@@ -33,20 +45,26 @@ function replaceElementsByOtherWithCSS(htmlDoc: HTMLDocument) {
       continue;
     }
 
-    const {tag: targetTag, properties} = SIMPLE_TAGS[fromTag];
+    const { tag: targetTag, properties } = SIMPLE_TAGS[fromTag];
     const elements = Array.from(htmlDoc.querySelectorAll(fromTag));
-    elements.forEach(element => replaceElementTag(element, targetTag, properties));
+    elements.forEach((element) =>
+      replaceElementTag(element, targetTag, properties),
+    );
   }
 }
 
-function replaceElementTag(element: Element, targetTag: string, properties: MyCSSProperties) {
+function replaceElementTag(
+  element: Element,
+  targetTag: string,
+  properties: MyCSSProperties,
+) {
   const targetElement = createElement(targetTag, properties);
   replaceElementWithStructure(element, targetElement);
 }
 
 function createElement(tag: string, properties: MyCSSProperties) {
   const element = document.createElement(tag);
-  let styleValue = '';
+  let styleValue = "";
   for (const property in properties) {
     if (!Object.prototype.hasOwnProperty.call(properties, property)) {
       continue;
@@ -55,7 +73,7 @@ function createElement(tag: string, properties: MyCSSProperties) {
     styleValue = `${styleValue}${property}: ${properties[property]};`;
   }
   if (styleValue.length > 0) {
-    element.setAttribute('style', styleValue);
+    element.setAttribute("style", styleValue);
   }
 
   return element;

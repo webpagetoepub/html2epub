@@ -1,24 +1,18 @@
-import { Step } from '../step';
+import { Step } from "../step";
+import { collectNodes } from "./collect_nodes";
 
-const DESCRIPTION = 'Removing extra whitespaces';
-
+const DESCRIPTION = "Removing extra whitespaces";
 
 function removeExtraWhitespacesFromDocument(htmlDoc: HTMLDocument) {
-  function filterNode() {
-    return NodeFilter.FILTER_ACCEPT;
-  }
-
   mergeTextNodesElement(htmlDoc.documentElement);
 
-  const iterator = htmlDoc.createNodeIterator(
+  const textNodes = collectNodes<Text>(
     htmlDoc.documentElement,
     NodeFilter.SHOW_TEXT,
-    filterNode,
   );
-  let node;
 
-  while ((node = iterator.nextNode()) !== null) {
-    removeExtraWhitespaces(node as Text);
+  for (const textNode of textNodes) {
+    removeExtraWhitespaces(textNode);
   }
 }
 
@@ -48,21 +42,22 @@ function mergeTextNodesElement(element: Element) {
 }
 
 function removeExtraWhitespaces(textNode: Text) {
-    if (!canRemoveWhitespaces(textNode)) {
-      return;
-    }
+  if (!canRemoveWhitespaces(textNode)) {
+    return;
+  }
 
-    textNode.nodeValue = textNode.nodeValue!.replace(/\r/g, '')
-                                           .replace(/\t/g, ' ')
-                                           .replace(/  +/g, ' ')
-                                           .replace(/\n[\n ]+/g, '\n')
-                                           .replace(/ +\n/g, '\n');
+  textNode.nodeValue = textNode
+    .nodeValue!.replace(/\r/g, "")
+    .replace(/\t/g, " ")
+    .replace(/  +/g, " ")
+    .replace(/\n[\n ]+/g, "\n")
+    .replace(/ +\n/g, "\n");
 }
 
 function canRemoveWhitespaces(textNode: Text) {
-    const parentTagName = textNode.parentElement!.tagName;
+  const parentTagName = textNode.parentElement!.tagName;
 
-    return ['PRE', 'CODE'].indexOf(parentTagName) == -1;
+  return ["PRE", "CODE"].indexOf(parentTagName) == -1;
 }
 
 export default new Step(DESCRIPTION, removeExtraWhitespacesFromDocument);

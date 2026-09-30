@@ -1,19 +1,31 @@
-import { Step } from '../step';
-import replaceElementWithStructure from '../replace_element';
+import { Step } from "../step";
+import replaceElementWithStructure from "../replace_element";
 
 const SIMPLE_TAGS: Record<string, string[]> = {
-  'div': [
-    'article', 'aside', 'details', 'figure', 'fieldset', 'footer', 'form',
-    'header', 'hgroup', 'main', 'noframes', 'noscript', 'picture', 'search',
-    'section',
+  div: [
+    "article",
+    "aside",
+    "details",
+    "figure",
+    "fieldset",
+    "footer",
+    "form",
+    "header",
+    "hgroup",
+    "main",
+    "noframes",
+    "noscript",
+    "picture",
+    "search",
+    "section",
   ],
-  'ul': ['dir'],
-  'span': ['bdi', 'data', 'label', 'rt', 'ruby', 'time', 'rp', 'wbr'],
-  'p': ['figcaption', 'summary', 'legend'],
-  'del': ['s', 'strike'],
+  ul: ["dir"],
+  span: ["bdi", "data", "label", "rt", "ruby", "time", "rp", "wbr"],
+  p: ["figcaption", "summary", "legend"],
+  del: ["s", "strike"],
 };
 
-const DESCRIPTION = 'Replace simple elements tag';
+const DESCRIPTION = "Replace simple elements tag";
 
 function replaceSimpleElementsTag(htmlDoc: HTMLDocument) {
   for (const targetTag in SIMPLE_TAGS) {
@@ -21,9 +33,9 @@ function replaceSimpleElementsTag(htmlDoc: HTMLDocument) {
       continue;
     }
 
-    const selector = SIMPLE_TAGS[targetTag].join(',');
+    const selector = SIMPLE_TAGS[targetTag].join(",");
     const elements = Array.from(htmlDoc.querySelectorAll(selector));
-    elements.forEach(element => replaceElementTag(element, targetTag));
+    elements.forEach((element) => replaceElementTag(element, targetTag));
   }
 }
 

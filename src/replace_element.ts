@@ -1,4 +1,7 @@
-export default function replaceElementWithStructure(from: Element, to: Element) {
+export default function replaceElementWithStructure(
+  from: Element,
+  to: Element,
+) {
   copyAttributes(from, to);
   transferChildNodes(from, to);
   (from.parentNode as Element).replaceChild(to, from);
