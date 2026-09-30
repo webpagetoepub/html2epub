@@ -3,7 +3,7 @@ import * as assert from "node:assert/strict";
 import { unzipSync, strFromU8 } from "fflate";
 import convertDocumentToEPub from "../src/index";
 
-const STEPS_LENGTH = 32;
+const STEPS_LENGTH = 33;
 const HTML = `<!DOCTYPE html>
 <html lang="en">
   <head>

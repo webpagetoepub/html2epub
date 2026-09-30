@@ -1,4 +1,5 @@
 import { Step } from "../step";
+import hasAttributeText from "../has_attribute_text";
 
 const DESCRIPTION = "Removing images without source";
 
@@ -15,10 +16,6 @@ function removeImagesWithoutSrc(htmlDoc: HTMLDocument) {
     .filter((image) => !hasAttributeText(image, "src"))
     .filter((image) => !hasAttributeText(image, "alt"))
     .forEach((image) => image.remove());
-}
-
-function hasAttributeText(element: Element, attribute: string) {
-  return Boolean(element.getAttribute(attribute)?.trim());
 }
 
 export default new Step(DESCRIPTION, removeImagesWithoutSrc);

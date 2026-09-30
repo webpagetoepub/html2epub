@@ -19,6 +19,22 @@ test("removes an <img> with blank src and blank alt", () => {
   assert.equal(doc.querySelectorAll("img").length, 0);
 });
 
+test("removes an <img> without src and with empty alt", () => {
+  const doc = makeDoc('<img alt="">');
+
+  removeImagesWithoutSrc.run(doc);
+
+  assert.equal(doc.querySelectorAll("img").length, 0);
+});
+
+test("removes an <img> without src and with whitespace-only alt", () => {
+  const doc = makeDoc('<img alt="   ">');
+
+  removeImagesWithoutSrc.run(doc);
+
+  assert.equal(doc.querySelectorAll("img").length, 0);
+});
+
 test("preserves an <img> without src that has alt text", () => {
   const doc = makeDoc('<img alt="A chart">');
 
