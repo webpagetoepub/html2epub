@@ -2,6 +2,34 @@ import { Step } from "./step";
 
 const DESCRIPTION = "Retrieving metadata from HTML document";
 
+// Languages jEpub ships translations for; any other code makes jEpub's init()
+// throw "Unknown Language", so unsupported pages fall back to DEFAULT_LANGUAGE.
+const SUPPORTED_LANGUAGES = new Set([
+  "en",
+  "vi",
+  "hi",
+  "fr",
+  "de",
+  "es",
+  "it",
+  "pt",
+  "ru",
+  "ja",
+  "ko",
+  "zh",
+  "ar",
+  "nl",
+  "sv",
+  "da",
+  "no",
+  "fi",
+  "pl",
+  "cs",
+  "tr",
+]);
+const DEFAULT_LANGUAGE = "en";
+const LANGUAGE_ATTRIBUTES = ["lang", "xml:lang"];
+
 function getMetadata(htmlDoc: HTMLDocument, url: string) {
   return {
     title: getTitle(htmlDoc, url),
@@ -11,7 +39,28 @@ function getMetadata(htmlDoc: HTMLDocument, url: string) {
     uuid: url,
     description: getDescription(htmlDoc),
     tags: getTags(htmlDoc),
+    language: getLanguage(htmlDoc),
   };
+}
+
+// The first language attribute present on <html> wins even when blank: per
+// the HTML spec lang="" declares the language unknown, so it yields the default.
+function getLanguage(htmlDoc: HTMLDocument): string {
+  const root = htmlDoc.documentElement;
+  const attribute = LANGUAGE_ATTRIBUTES.find((name) => root.hasAttribute(name));
+
+  if (!attribute) {
+    return DEFAULT_LANGUAGE;
+  }
+
+  return normalizeLanguage(root.getAttribute(attribute)!);
+}
+
+// Keeps only the primary subtag: "en-US" → "en", "pt_BR" → "pt".
+function normalizeLanguage(languageTag: string): string {
+  const primary = languageTag.trim().split(/[-_]/)[0].toLowerCase();
+
+  return SUPPORTED_LANGUAGES.has(primary) ? primary : DEFAULT_LANGUAGE;
 }
 
 function getTitle(htmlDoc: HTMLDocument, url: string) {

@@ -181,3 +181,33 @@ function makeDoc(headHTML: string, title = ""): HTMLDocument {
   doc.head.innerHTML += headHTML;
   return doc as HTMLDocument;
 }
+
+const LANGUAGE_CASES: { attributes: string; expected: string }[] = [
+  { attributes: 'lang="fr"', expected: "fr" },
+  { attributes: 'lang="en-US"', expected: "en" },
+  { attributes: 'lang="pt_BR"', expected: "pt" },
+  { attributes: 'lang="ES-es"', expected: "es" },
+  { attributes: 'lang="xx"', expected: "en" },
+  { attributes: 'lang="nb-NO"', expected: "en" },
+  { attributes: 'xml:lang="de"', expected: "de" },
+  { attributes: 'lang="xx" xml:lang="de"', expected: "en" },
+  { attributes: 'lang="" xml:lang="ja"', expected: "en" },
+  { attributes: 'lang="  " xml:lang="ja"', expected: "en" },
+  { attributes: 'xml:lang=""', expected: "en" },
+  { attributes: "", expected: "en" },
+];
+
+for (const { attributes, expected } of LANGUAGE_CASES) {
+  test(`returns language "${expected}" for <html ${attributes}>`, () => {
+    const doc = makeDocWithHtmlAttributes(attributes);
+
+    const result = getMetadata.run(doc, "https://example.com");
+
+    assert.equal(result.language, expected);
+  });
+}
+
+function makeDocWithHtmlAttributes(attributes: string): HTMLDocument {
+  const html = `<html ${attributes}><head></head><body></body></html>`;
+  return new DOMParser().parseFromString(html, "text/html") as HTMLDocument;
+}

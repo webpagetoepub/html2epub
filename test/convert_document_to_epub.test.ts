@@ -3,7 +3,7 @@ import * as assert from "node:assert/strict";
 import { unzipSync, strFromU8 } from "fflate";
 import convertDocumentToEPub from "../src/index";
 
-const STEPS_LENGTH = 31;
+const STEPS_LENGTH = 33;
 const HTML = `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -73,6 +73,23 @@ test("converts an HTML page to an EPUB without crashing", async () => {
   );
 
   assert.ok(result, "result should be defined");
+  assert.ok(result.epub instanceof Blob, "result.epub should be a Blob");
+});
+
+// jEpub throws "Unknown Language" for codes outside its list, so an
+// unsupported page language must fall back instead of failing the conversion.
+test("converts a page whose language jEpub does not support", async () => {
+  const html = HTML.replace('<html lang="en">', '<html lang="unknown">');
+
+  const result = await convertDocumentToEPub(
+    "https://example.com/article",
+    Promise.resolve(html),
+    NO_IMAGES,
+    () => {},
+    () => {},
+    new MockLogger(),
+  );
+
   assert.ok(result.epub instanceof Blob, "result.epub should be a Blob");
 });
 
