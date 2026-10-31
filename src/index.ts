@@ -5,9 +5,11 @@ import replaceElements from "./replace_elements";
 import getMainContent from "./get_main_content";
 import splitContentByHeadings, { SplittedElement } from "./split_main_content";
 import loadImagesStepFactory from "./load_images";
+import createImagesFromDataUrls from "./create_images_from_data_urls";
 import createEpubStepFactory from "./create_epub";
 import fixLinks from "./fix_links";
 import { Step, Process } from "./step";
+import { LoadedImage } from "./loaded_image";
 import { Logger } from "./logger";
 
 export default async function convertDocumentToEPub(
@@ -25,6 +27,13 @@ export default async function convertDocumentToEPub(
     convertSplittedContentInHTMLContent,
   );
   const loadImages = loadImagesStepFactory(loadImageFrom);
+  const collectImages = new Step(
+    "Collecting all images",
+    (loaded: LoadedImage[], fromDataURLs: LoadedImage[]) => [
+      ...loaded,
+      ...fromDataURLs,
+    ],
+  );
   const createEPUB = createEpubStepFactory(logger);
 
   const convertDocumentProcess = new Process([
@@ -36,6 +45,11 @@ export default async function convertDocumentToEPub(
     { step: replaceElements, dependencies: [convertTextToDOM] },
     { step: getMainContent, dependencies: [convertTextToDOM] },
     { step: loadImages, dependencies: [getMainContent, urlStep] },
+    { step: createImagesFromDataUrls, dependencies: [getMainContent] },
+    {
+      step: collectImages,
+      dependencies: [loadImages, createImagesFromDataUrls],
+    },
     {
       step: splitContentByHeadings,
       dependencies: [getMainContent, getMetadata],
@@ -50,7 +64,7 @@ export default async function convertDocumentToEPub(
       dependencies: [
         convertSplittedContentInHTMLContentStep,
         getMetadata,
-        loadImages,
+        collectImages,
       ],
     },
   ]);
