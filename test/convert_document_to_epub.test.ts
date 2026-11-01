@@ -3,7 +3,7 @@ import * as assert from "node:assert/strict";
 import { unzipSync, strFromU8 } from "fflate";
 import convertDocumentToEPub from "../src/index";
 
-const STEPS_LENGTH = 35;
+const STEPS_LENGTH = 36;
 const HTML = `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -156,6 +156,59 @@ test("splits chapters into multiple pages when combined content exceeds 200KB", 
     pages.length >= 2,
     `chapters exceeding 200KB should split across pages, got: ${JSON.stringify(pages)}`,
   );
+});
+
+// Regression: empty-element removal runs inside cleanDocument, BEFORE
+// replaceElements rewrites tags like <figure> to <div>. An empty <figure>
+// survives the cleanup pass (FIGURE is not in TAGS_CAN_REMOVE) and becomes an
+// empty <div> that nothing removes, leaking into the EPUB.
+test("does not leave empty <div> elements in the generated chapters", async () => {
+  const html = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Empty Div Article</title>
+    <meta name="author" content="Test Author" />
+  </head>
+  <body>
+    <main>
+      <p>This is the main content of the test article. It has enough text to
+      exceed the 80-character threshold used by the content splitter so it
+      gets included as a chapter in the resulting EPUB file.</p>
+      <figure> </figure>
+    </main>
+  </body>
+</html>`;
+
+  const result = await convertDocumentToEPub(
+    "https://example.com/article",
+    Promise.resolve(html),
+    NO_IMAGES,
+    () => {},
+    () => {},
+    new MockLogger(),
+  );
+
+  const files = unzipSync(new Uint8Array(await result.epub.arrayBuffer()));
+  const pages = Object.keys(files).filter((name) =>
+    /^OEBPS\/page-\d+\.html$/.test(name),
+  );
+
+  const parser = new DOMParser();
+  for (const page of pages) {
+    const pageHtml = strFromU8(files[page]);
+    const doc = parser.parseFromString(pageHtml, "text/html");
+    const emptyContainers = Array.from(
+      doc.querySelectorAll("div, figure"),
+    ).filter(
+      (element) =>
+        element.childNodes.length === 0 && !element.textContent!.trim(),
+    );
+    assert.strictEqual(
+      emptyContainers.length,
+      0,
+      `page "${page}" should contain no empty <div>/<figure>, got:\n${pageHtml}`,
+    );
+  }
 });
 
 test("renders images in chapter HTML with src matching the stored asset path", async () => {
