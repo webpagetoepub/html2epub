@@ -2,6 +2,7 @@ import convertTextToDOM from "./convert_text_dom";
 import getMetadata from "./get_metadata";
 import cleanDocument from "./clean_document";
 import removeEmptyElements from "./clean_document/remove_empty_elements";
+import flattenNestedElements from "./clean_document/flatten_nested_elements";
 import replaceElements from "./replace_elements";
 import getMainContent from "./get_main_content";
 import splitContentByHeadings, { SplittedElement } from "./split_main_content";
@@ -49,6 +50,7 @@ export default async function convertDocumentToEPub(
     // cleanup pass inside cleanDocument already ran past. Re-run it here so
     // those empty elements do not leak into the EPUB.
     { step: removeEmptyElements, dependencies: [convertTextToDOM] },
+    { step: flattenNestedElements, dependencies: [convertTextToDOM] },
     { step: getMainContent, dependencies: [convertTextToDOM] },
     { step: loadImages, dependencies: [getMainContent, urlStep] },
     { step: createImagesFromDataUrls, dependencies: [getMainContent] },
