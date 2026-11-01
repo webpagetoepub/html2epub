@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import * as assert from "node:assert/strict";
 import "../../test/setup";
-import flattenNestedElements from "../../src/clean_document/flatten_nested_elements";
+import flattenNestedElements from "../../src/reduce_elements/flatten_nested_elements";
 
 test("collapses a three-level <div> chain into one <div>", () => {
   const doc = makeDoc("<div><div><div>Hello</div></div></div>");

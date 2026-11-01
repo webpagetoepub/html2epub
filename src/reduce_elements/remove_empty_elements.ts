@@ -1,5 +1,5 @@
 import { Step } from "../step";
-import { collectNodes } from "./collect_nodes";
+import { collectNodes } from "../clean_document/collect_nodes";
 
 const DESCRIPTION = "Removing empty HTML elements";
 

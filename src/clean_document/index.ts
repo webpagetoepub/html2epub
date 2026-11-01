@@ -1,7 +1,6 @@
 import removeElementsFromDocument from "./remove_elements";
 import removeHiddenElements from "./remove_hidden_elements";
 import removeAllComments from "./remove_comments";
-import removeEmptyElements from "./remove_empty_elements";
 import removeDataAttributes from "./remove_data_attributes";
 import removeAttributes from "./remove_attributes";
 import removeExtraWhitespacesFromDocument from "./remove_whitespaces";
@@ -24,7 +23,6 @@ function buildCleanDocumentProcess(htmlDoc: HTMLDocument): Process {
     { step: removeAttributes, dependencies: [firstStep] },
     { step: removeExtraWhitespacesFromDocument, dependencies: [firstStep] },
     { step: removeEmptySVGs, dependencies: [firstStep] },
-    { step: removeEmptyElements, dependencies: [firstStep] },
   ]);
 }
 

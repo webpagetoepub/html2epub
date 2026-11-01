@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import * as assert from "node:assert/strict";
 import "../../test/setup";
-import removeEmptyElements from "../../src/clean_document/remove_empty_elements";
+import removeEmptyElements from "../../src/reduce_elements/remove_empty_elements";
 
 test("removes an empty <p>", () => {
   const doc = makeDoc("<p></p>");
