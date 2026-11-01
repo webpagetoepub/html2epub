@@ -3,7 +3,7 @@ import * as assert from "node:assert/strict";
 import { unzipSync, strFromU8 } from "fflate";
 import convertDocumentToEPub from "../src/index";
 
-const STEPS_LENGTH = 33;
+const STEPS_LENGTH = 38;
 const HTML = `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -157,6 +157,147 @@ test("splits chapters into multiple pages when combined content exceeds 200KB", 
     `chapters exceeding 200KB should split across pages, got: ${JSON.stringify(pages)}`,
   );
 });
+
+// Regression: empty-element removal runs inside cleanDocument, BEFORE
+// replaceElements rewrites tags like <figure> to <div>. An empty <figure>
+// survives the cleanup pass (FIGURE is not in TAGS_CAN_REMOVE) and becomes an
+// empty <div>; the later reduceElements pass must drop it so it does not leak
+// into the EPUB. The <figure> sits inside a <blockquote> that carries real text
+// — a tag the pipeline keeps but never produces — so the blockquote anchors our
+// content while we prove the converted <div> was removed and the surrounding
+// text survived (rather than the whole branch being pruned as empty).
+test("removes a converted empty element while keeping its content-bearing parent", async () => {
+  const html = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Empty Element Article</title>
+    <meta name="author" content="Test Author" />
+  </head>
+  <body>
+    <main>
+      <p>This is the main content of the test article. It has enough text to
+      exceed the 80-character threshold used by the content splitter so it
+      gets included as a chapter in the resulting EPUB file.</p>
+      <blockquote>Quoted text that keeps this element alive.<figure> </figure></blockquote>
+    </main>
+  </body>
+</html>`;
+
+  const result = await convertDocumentToEPub(
+    "https://example.com/article",
+    Promise.resolve(html),
+    NO_IMAGES,
+    () => {},
+    () => {},
+    new MockLogger(),
+  );
+
+  const files = unzipSync(new Uint8Array(await result.epub.arrayBuffer()));
+  const pages = Object.keys(files).filter((name) =>
+    /^OEBPS\/page-\d+\.html$/.test(name),
+  );
+
+  const parser = new DOMParser();
+  const blockquotes = pages.flatMap((page) =>
+    Array.from(
+      parser
+        .parseFromString(strFromU8(files[page]), "text/html")
+        .querySelectorAll("blockquote"),
+    ),
+  );
+
+  assert.strictEqual(
+    blockquotes.length,
+    1,
+    `the content-bearing <blockquote> should survive exactly once, got ${blockquotes.length}`,
+  );
+  assert.strictEqual(
+    blockquotes[0].children.length,
+    0,
+    `the empty <figure> (converted to <div>) should be removed, leaving no child elements, got:\n${blockquotes[0].innerHTML}`,
+  );
+  assert.match(
+    blockquotes[0].textContent!,
+    /Quoted text that keeps this element alive\./,
+    `the blockquote text should survive, got:\n${blockquotes[0].innerHTML}`,
+  );
+});
+
+// <center> is rewritten to <div style="text-align: center"> (replaceElements),
+// then redundant same-tag nesting collapses and empty elements are dropped
+// (reduceElements). However deeply the <center> tags nest — and wherever the
+// text or the empty tags sit in the chain — the result must reduce to a single
+// <div> holding the text. Each case is wrapped in a <blockquote>: a tag the
+// pipeline keeps but never produces, so the only <div>s inside it come from the
+// <center> chain, which lets us count them to prove the collapse really happened.
+const NESTED_CENTER_CASES = [
+  "<center><center><center>Hello</center></center></center>",
+  "<center><center>Hello<center></center></center></center>",
+  "<center>Hello<center><center></center></center></center>",
+];
+
+function buildNestedCenterHtml(centerMarkup: string): string {
+  return `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Nested Center Article</title>
+    <meta name="author" content="Test Author" />
+  </head>
+  <body>
+    <main>
+      <p>This is the main content of the test article. It has enough text to
+      exceed the 80-character threshold used by the content splitter so it
+      gets included as a chapter in the resulting EPUB file.</p>
+      <blockquote>${centerMarkup}</blockquote>
+    </main>
+  </body>
+</html>`;
+}
+
+for (const centerMarkup of NESTED_CENTER_CASES) {
+  test(`collapses nested <center> chain into a single <div>: ${centerMarkup}`, async () => {
+    const result = await convertDocumentToEPub(
+      "https://example.com/article",
+      Promise.resolve(buildNestedCenterHtml(centerMarkup)),
+      NO_IMAGES,
+      () => {},
+      () => {},
+      new MockLogger(),
+    );
+
+    const files = unzipSync(new Uint8Array(await result.epub.arrayBuffer()));
+    const pages = Object.keys(files).filter((name) =>
+      /^OEBPS\/page-\d+\.html$/.test(name),
+    );
+
+    const parser = new DOMParser();
+    const blockquotes = pages.flatMap((page) =>
+      Array.from(
+        parser
+          .parseFromString(strFromU8(files[page]), "text/html")
+          .querySelectorAll("blockquote"),
+      ),
+    );
+
+    assert.strictEqual(
+      blockquotes.length,
+      1,
+      `the source <blockquote> should survive exactly once, got ${blockquotes.length}`,
+    );
+
+    const divs = blockquotes[0].querySelectorAll("div");
+    assert.strictEqual(
+      divs.length,
+      1,
+      `nested <center> chain should collapse to one <div>, got ${divs.length}:\n${blockquotes[0].innerHTML}`,
+    );
+    assert.strictEqual(
+      divs[0].textContent!.trim(),
+      "Hello",
+      `the surviving <div> should hold the text, got:\n${blockquotes[0].innerHTML}`,
+    );
+  });
+}
 
 test("renders images in chapter HTML with src matching the stored asset path", async () => {
   const url = "https://example.com/article";
